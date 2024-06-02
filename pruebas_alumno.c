@@ -140,6 +140,8 @@ void cuando_se_solicita_pokemones_disponibles_se_devuelve_un_string_con_los_poke
 
     pa2m_afirmar(cantidad_pokemones == tp_cantidad_pokemon(tp), "La cantidad de pokemones disponibles es correcta.");
 
+	printf("%s", pokemones_disponibles);
+
     free(pokemones_disponibles);
 
     tp_destruir(tp);
@@ -223,8 +225,103 @@ void cuando_se_selecciona_un_pokemon_teniendo_uno_se_actualiza_y_se_devuelve_tru
     tp_destruir(tp);
 }
 
+void cuando_se_agrega_un_obstaculo_a_una_pista_se_espera_la_cantidad_correcta_de_obstaculos()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1, "Agrega un obstaculo en la primer posición de la pista del jugador 1.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 2, "Agrega un obstaculo en la segunda posición de la pista del jugador 1.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2) == 3, "Agrega un obstaculo en una posición  de la pista del jugador 1.");
+
+	tp_destruir(tp);
+}
 
 
+void cuando_se_agrega_un_obstaculo_en_misma_posicion_que_otro_se_espera_que_se_desplecen_a_la_siguiente_posición()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 0) == 1, "Agrega un obstaculo en la primer posición de la pista del jugador 2.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 0) == 2, "Agrega un obstaculo en la misma posición que otro obstaculo en la pista del jugador 2, desplazando el otro a la derecha.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 0) == 3, "Agrega un obstaculo en la misma posición que otro obstaculo en la pista del jugador 2, desplazando el otro a la derecha.");
+
+	tp_destruir(tp);
+}
+
+
+void cuando_se_agrega_un_obstaculo_en_una_posición_fuera_del_rango_se_espera_que_se_agregue_al_final()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 0) == 1, "Agrega un obstaculo en la primer posición de la pista del jugador 2.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 10) == 2, "Agrega un obstaculo en una posición fuera de rango y se agrega al final de la pista del jugador 2.");
+	pa2m_afirmar(tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 20) == 3, "Agrega un obstaculo en una posición fuera de rango y se agrega al final de la pista del jugador 2.");
+
+	tp_destruir(tp);
+}
+
+void cuando_se_quita_un_obstaculo_de_una_pista_se_espera_la_cantidad_actual_total_de_obstaculos()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 1);
+
+	
+	pa2m_afirmar(tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 2, "Se quita correctamente el obstaculo en la posicion y devuelve la cantidad correcta de obstaculos.");
+	pa2m_afirmar(tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 1, "Se quita correctamente el obstaculo en la posicion y devuelve la cantidad correcta de obstaculos.");
+	pa2m_afirmar(tp_quitar_obstaculo(tp, JUGADOR_2, 0) == 0, "Se quita correctamente el último obstaculo de la pista y la pista esta vacía.");
+
+	tp_destruir(tp);
+}
+
+
+void cuando_se_solicitan_los_obstaculos_de_una_pista_se_espera_un_string_con_los_obstaculos() {
+
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 10);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1);
+
+	char* obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
+
+	pa2m_afirmar(obstaculos_pista != NULL, "Los obstaculos en la pista son correctos.");
+
+	printf("%s", obstaculos_pista);
+
+	free(obstaculos_pista);
+
+	tp_destruir(tp);
+}
+
+
+void cuando_se_limpia_la_pista_se_espera_que_la_pista_no_tenga_obstaculos() 
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 10);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1);
+
+
+	tp_limpiar_pista(tp, JUGADOR_1);
+
+
+	char* obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
+
+	pa2m_afirmar(obstaculos_pista == NULL, "Se eliminan los obstaculos correctamente.");
+
+
+	free(obstaculos_pista);
+
+	tp_destruir(tp);
+}
 
 int main()
 {	
@@ -253,7 +350,22 @@ int main()
 	cuando_se_selecciona_un_pokemon_utilizado_por_otro_jugador_se_devuelve_false();
 	cuando_se_selecciona_un_pokemon_teniendo_uno_se_actualiza_y_se_devuelve_true();
 
-	pa2m_nuevo_grupo("Agregar obstaculos a ");
+	pa2m_nuevo_grupo("Agregar obstaculos a una pista");
+	cuando_se_agrega_un_obstaculo_a_una_pista_se_espera_la_cantidad_correcta_de_obstaculos();
+	cuando_se_agrega_un_obstaculo_en_misma_posicion_que_otro_se_espera_que_se_desplecen_a_la_siguiente_posición();
+	cuando_se_agrega_un_obstaculo_en_una_posición_fuera_del_rango_se_espera_que_se_agregue_al_final();
+
+	pa2m_nuevo_grupo("Quitar obstaculos a una pista");
+	cuando_se_quita_un_obstaculo_de_una_pista_se_espera_la_cantidad_actual_total_de_obstaculos();
+
+	pa2m_nuevo_grupo("Obstaculos en pista");
+	cuando_se_solicitan_los_obstaculos_de_una_pista_se_espera_un_string_con_los_obstaculos();
+
+	pa2m_nuevo_grupo("Limpiar pista");
+	cuando_se_limpia_la_pista_se_espera_que_la_pista_no_tenga_obstaculos();
+	
+	pa2m_nuevo_grupo("Calculo de tiempo por obstaculo");
+
 
 
 	return pa2m_mostrar_reporte();

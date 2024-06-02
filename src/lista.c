@@ -304,7 +304,7 @@ void lista_iterador_destruir(lista_iterador_t *iterador)
 size_t lista_con_cada_elemento(lista_t *lista, bool (*funcion)(void *, void *),
 			       void *contexto)
 {
-	if (!lista || !funcion || !contexto || lista_vacia(lista)) {
+	if (!lista || !funcion || lista_vacia(lista)) {
 		return 0;
 	}
 
