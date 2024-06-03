@@ -323,6 +323,93 @@ void cuando_se_limpia_la_pista_se_espera_que_la_pista_no_tenga_obstaculos()
 	tp_destruir(tp);
 }
 
+void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_un_string_csv() 
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	char* poke = "Pikachu";
+
+	tp_seleccionar_pokemon(tp, JUGADOR_1, poke);
+
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 4);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 5);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 6);
+
+	char* tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_1);
+
+	pa2m_afirmar(tiempos_obstaculos != NULL, "Se calculan los tiempos de los obstaculos correctamente.");
+
+
+	free(tiempos_obstaculos);
+
+	tp_destruir(tp);
+}
+
+void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_considere_sus_anteriores() 
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	char* poke = "charizard";
+
+	tp_seleccionar_pokemon(tp, JUGADOR_2, poke);
+
+
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 3);
+
+
+	char* tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
+
+	pa2m_afirmar(tiempos_obstaculos != NULL, "Se calculan los tiempos de los obstaculos correctamente.");
+
+	free(tiempos_obstaculos);
+
+	tp_destruir(tp);
+}
+
+
+void cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA); 
+
+	char* poke = "charizard";
+
+	tp_seleccionar_pokemon(tp, JUGADOR_2, poke);
+
+
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 3);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 3);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 1);
+
+	printf("\n%s", tp_obstaculos_pista(tp, JUGADOR_2));
+
+	char* tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
+
+	unsigned tiempo_pista = tp_calcular_tiempo_pista(tp, JUGADOR_2);
+
+
+
+	pa2m_afirmar(tiempos_obstaculos != NULL, "Se calculan los tiempos de los obstaculos correctamente.");
+
+	printf("%s\n", tiempos_obstaculos);
+	printf("%u", tiempo_pista);
+
+	free(tiempos_obstaculos);
+
+	tp_destruir(tp);
+
+}
+
+
 int main()
 {	
 	pa2m_nuevo_grupo("Creación de tp con archivo nulo");
@@ -365,6 +452,12 @@ int main()
 	cuando_se_limpia_la_pista_se_espera_que_la_pista_no_tenga_obstaculos();
 	
 	pa2m_nuevo_grupo("Calculo de tiempo por obstaculo");
+	cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_un_string_csv();
+	cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_considere_sus_anteriores();
+
+	pa2m_nuevo_grupo("Calculo de tiempo total de la pista");
+	cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido();
+
 
 
 

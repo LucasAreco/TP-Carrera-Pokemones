@@ -21,6 +21,7 @@ typedef struct jugador {
 	enum TP_JUGADOR tipo_jugador;
 	const struct pokemon_info* pokemon_elegido;
 	lista_t* obstaculos;
+    unsigned tiempo_pista;
 } jugador_t;
 
 struct tp {
@@ -110,15 +111,17 @@ void inicializar_jugadores(TP* tp)
 	usuario->pokemon_elegido = NULL;
 	computadora->pokemon_elegido = NULL;
 
+    usuario->tiempo_pista = 0;
+    computadora->tiempo_pista = 0;
+
 	usuario->obstaculos = lista_crear();
 	if (!usuario->obstaculos) {
-		printf("La lista de obstáculos del usuario está vacía.\n");
 		return;
 	}
 
 	computadora->obstaculos = lista_crear();
 	if (!computadora->obstaculos) {
-		printf("La lista de obstáculos del usuario está vacía.\n");
+        free(usuario->obstaculos);
 		return;
 	}
 
@@ -255,9 +258,9 @@ const char* conversor_obstaculo_a_cadena(void* elemento) {
 }
 
 
-bool llenar_cadena(void *elemento, void *contexto) {
+bool llenar_cadena_letras(void *elemento, void *contexto) {
     cadena_t *cadena = (cadena_t *)contexto;
-	 const char *elemento_str;
+	const char *elemento_str;
 
 	if (cadena->hay_conversion) {
 		elemento_str = conversor_obstaculo_a_cadena(elemento);
@@ -304,7 +307,7 @@ char *tp_nombres_disponibles(TP *tp) {
     cadena.separador = ',';
 	cadena.hay_conversion = false;
 
-    if (abb_con_cada_elemento(tp->pokemones, INORDEN, llenar_cadena, &cadena) == false) {
+    if (abb_con_cada_elemento(tp->pokemones, INORDEN, llenar_cadena_letras, &cadena) == false) {
         free(cadena.palabras); 
         return NULL;
     }
@@ -435,13 +438,11 @@ char *tp_obstaculos_pista(TP *tp, enum TP_JUGADOR jugador)
     }
 
 	cadena.palabras[0] = '\0';
-    cadena.separador = ' ';
+    cadena.separador = '\0';
 	cadena.hay_conversion = true;
 
 
-
-
-	if (lista_con_cada_elemento(pista_actual, llenar_cadena, &cadena) == 0) {
+	if (lista_con_cada_elemento(pista_actual, llenar_cadena_letras, &cadena) == 0) {
 		free(cadena.palabras);
 		return NULL;
 	}
@@ -473,36 +474,118 @@ void tp_limpiar_pista(TP *tp, enum TP_JUGADOR jugador)
     }
 }
 
-
-
-
-unsigned tiempo_por_obstaculo(TP* tp, enum TP_JUGADOR jugador)
+int obtener_valor_atributo_pokemon(const struct pokemon_info* pokemon, enum TP_OBSTACULO* obstaculo)
 {
-
-	if (!tp) {
-		return 0;
+    switch (*obstaculo) {
+        case OBSTACULO_FUERZA: return pokemon->fuerza;
+        case OBSTACULO_DESTREZA: return pokemon->destreza;
+        case OBSTACULO_INTELIGENCIA: return pokemon->inteligencia;
+        default: return -1;
 	}
-
-	jugador_t* jugador_actual = tp->jugadores[jugador];
-	if (!jugador_actual || !jugador_actual->pokemon_elegido) {
-		return 0;
-	}
-	
-	lista_t* pista_actual = jugador_actual->obstaculos;
-	if (!pista_actual) {
-		return 0;
-	}
-
-	unsigned tiempo_obstaculo = 0;
-
-	
+}
 
 
+char* agregar_numero_a_cadena(char* cadena, int numero) {
+    char numero_str[12];
+    snprintf(numero_str, sizeof(numero_str), "%d", numero);
+
+    size_t nuevo_tamanio = strlen(cadena) + strlen(numero_str) + 2;
+
+    char* nueva_cadena = realloc(cadena, nuevo_tamanio);
+    if (!nueva_cadena) {
+        free(cadena);
+        return NULL;
+    }
+
+    if (strlen(nueva_cadena) != 0) {
+        strncat(nueva_cadena, ",", 1);
+    }
+
+    strcat(nueva_cadena, numero_str);
+
+    return nueva_cadena;
+}
+
+
+
+
+char* con_cada_obstaculo(jugador_t* jugador, lista_t* obstaculos, char* cadena, int* tiempo_pista)
+{
+    lista_iterador_t* iterador = lista_iterador_crear(obstaculos);
+    if (!iterador) {
+        return NULL;
+    }
+
+    int tiempo_obstaculo = 0;
+
+    enum TP_OBSTACULO obstaculo_anterior = -1;
+
+    int cantidad_mismos_consecutivos = 0;
+
+    while (lista_iterador_tiene_siguiente(iterador)) {
+        enum TP_OBSTACULO* obstaculo_actual = lista_iterador_elemento_actual(iterador);
+        int atributo_pokemon = obtener_valor_atributo_pokemon(jugador->pokemon_elegido, obstaculo_actual);
+
+        tiempo_obstaculo = 10 - atributo_pokemon;
+
+        if (obstaculo_anterior  == *obstaculo_actual) {
+            cantidad_mismos_consecutivos++;
+            tiempo_obstaculo -= cantidad_mismos_consecutivos;
+        } else {
+            cantidad_mismos_consecutivos = 0;
+        }
+        
+        int tiempo_obstaculo_modulo = abs(tiempo_obstaculo);
+
+        if (cadena) {
+            cadena = agregar_numero_a_cadena(cadena, tiempo_obstaculo_modulo);
+        }
+
+        if (tiempo_pista) {
+            jugador->tiempo_pista += (unsigned)tiempo_obstaculo_modulo;
+        }
+
+        tiempo_obstaculo = 0;
+
+        obstaculo_anterior = *obstaculo_actual;    
+
+
+        lista_iterador_avanzar(iterador);
+    }
+
+    lista_iterador_destruir(iterador);
+
+    return cadena;
 
 }
 
 
 
+
+
+char *tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador) {
+    if (!tp) {
+        return 0;
+    }
+
+    jugador_t *jugador_actual = tp->jugadores[jugador];
+    lista_t *pista_actual = jugador_actual->obstaculos;
+
+    if (!pista_actual || !jugador_actual ||!jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
+        return NULL;
+    }
+
+    char* cadena = malloc(1);
+    if (!cadena) {
+        return NULL;
+    }
+    cadena[0] = '\0';
+
+    cadena = con_cada_obstaculo(jugador_actual, pista_actual, cadena, NULL);
+
+   
+    return cadena;
+}
 
 
 
@@ -510,16 +593,21 @@ unsigned tiempo_por_obstaculo(TP* tp, enum TP_JUGADOR jugador)
 
 unsigned tp_calcular_tiempo_pista(TP *tp, enum TP_JUGADOR jugador)
 {
-	return 0;
+    if (!tp || !jugador) {
+        return 0;
+    }
+
+    jugador_t *jugador_actual = tp->jugadores[jugador];
+    lista_t *pista_actual = jugador_actual->obstaculos;
+
+    if (!pista_actual || !jugador_actual ||!jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
+        return 0;
+    }
+
+    con_cada_obstaculo(jugador_actual, jugador_actual->obstaculos, NULL, (int*)&jugador_actual->tiempo_pista);
+
+	return jugador_actual->tiempo_pista;
 }
-
-char *tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador)
-{
-	return NULL;
-}
-
-
-
 
 
 
