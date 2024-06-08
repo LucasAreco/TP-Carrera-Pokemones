@@ -32,6 +32,7 @@ struct tp {
 
 
 typedef struct cadena {
+    TP* tp;
 	char* palabras;
 	char separador;
 	bool hay_conversion;
@@ -39,21 +40,18 @@ typedef struct cadena {
 
 
 
-bool imprimir_recorrido(void *elemento, void *nulo) {
-    struct pokemon_info *pokemon = (struct pokemon_info *)elemento;
-    printf(" -> %s, %i, %i, %i\n", pokemon->nombre, pokemon->fuerza, pokemon->destreza, pokemon->inteligencia);    
-    return true; // Devolvemos true para continuar el recorrido
-}
+// bool imprimir_recorrido(void *elemento, void *nulo) {
+//     struct pokemon_info *pokemon = (struct pokemon_info *)elemento;
+//     printf(" -> %s, %i, %i, %i\n", pokemon->nombre, pokemon->fuerza, pokemon->destreza, pokemon->inteligencia);    
+//     return true; // Devolvemos true para continuar el recorrido
+// }
 
 
-
-
-
-bool imprimir_obstaculo(void *elemento, void *contexto) {
-    enum TP_OBSTACULO *obstaculo = (enum TP_OBSTACULO *)elemento;
-    printf("%d - ", *obstaculo);
-    return true; 
-}
+// bool imprimir_obstaculo(void *elemento, void *contexto) {
+//     enum TP_OBSTACULO *obstaculo = (enum TP_OBSTACULO *)elemento;
+//     printf("%d - ", *obstaculo);
+//     return true; 
+// }
 
 void convertir_primera_mayuscula(char* cadena) {
     if (!cadena|| *cadena == '\0') {
@@ -78,16 +76,21 @@ int comparar_pokemon(void *a, void *b) {
 }
 
 
-char* copiar_nombre(const char* nombre) {
-	size_t longitud = strlen(nombre) + 1; 
-	char *copia_nombre = malloc(longitud);  
-	if (copia_nombre == NULL) {
-		return NULL;           
+char *copiar_nombre(const char *clave)
+{
+	size_t largo = strlen(clave) + 1;
+	char *copia = malloc(largo);
+	if (!copia) {
+		return NULL;
 	}
-	memcpy(copia_nombre, nombre, longitud); //podria hacerlo de otra forma quiza.
 
-	return copia_nombre;
+	for (size_t i = 0; i < largo; i++) {
+		copia[i] = clave[i];
+	}
+
+	return copia;
 }
+
 
 
 
@@ -139,7 +142,7 @@ TP *tp_crear(const char *nombre_archivo)
 {
 	char registro[100];
 
-	if (nombre_archivo == NULL) {
+	if (!nombre_archivo) {
         return NULL;
     }
 
@@ -257,7 +260,6 @@ const char* conversor_obstaculo_a_cadena(void* elemento) {
 	}
 }
 
-
 bool llenar_cadena_letras(void *elemento, void *contexto) {
     cadena_t *cadena = (cadena_t *)contexto;
 	const char *elemento_str;
@@ -270,12 +272,17 @@ bool llenar_cadena_letras(void *elemento, void *contexto) {
 	}
 	else {
 		struct pokemon_info *pokemon = (struct pokemon_info *)elemento;
-		elemento_str = pokemon->nombre;
-	}
+        if (pokemon == tp_pokemon_seleccionado(cadena->tp, JUGADOR_1) || 
+            pokemon == tp_pokemon_seleccionado(cadena->tp, JUGADOR_2)) {
+            return true; 
+        }
+        
+        elemento_str = pokemon->nombre;
+    }
 
 
-	size_t nuevo_tamanio = strlen(cadena->palabras) + strlen(elemento_str) + 2; 
-
+    size_t nuevo_tamanio = strlen(cadena->palabras) + strlen(elemento_str) + 2; 
+    
     char *nueva_cadena = realloc(cadena->palabras, nuevo_tamanio);
     if (!nueva_cadena) {
         return false; 
@@ -303,6 +310,8 @@ char *tp_nombres_disponibles(TP *tp) {
     if (!cadena.palabras) {
         return NULL;
     }
+
+    cadena.tp = tp;
     cadena.palabras[0] = '\0';
     cadena.separador = ',';
 	cadena.hay_conversion = false;
@@ -337,7 +346,8 @@ bool tp_seleccionar_pokemon(TP *tp, enum TP_JUGADOR jugador, const char *nombre)
         otro_jugador = tp->jugadores[JUGADOR_1];
     }
 
-    if (otro_jugador->pokemon_elegido && strcmp(otro_jugador->pokemon_elegido->nombre, pokemon_seleccionado->nombre) == 0) {
+    if (otro_jugador->pokemon_elegido && 
+        strcmp(otro_jugador->pokemon_elegido->nombre, pokemon_seleccionado->nombre) == 0) {
         return false; 
     }
 
