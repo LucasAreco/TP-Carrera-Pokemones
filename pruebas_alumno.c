@@ -1,5 +1,6 @@
 #include "pa2m.h"
 #include "src/tp.h"
+#include "src/menu.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -139,6 +140,35 @@ void cuando_se_solicita_pokemones_disponibles_se_devuelve_un_string_con_los_poke
     cantidad_pokemones++;
 
     pa2m_afirmar(cantidad_pokemones == tp_cantidad_pokemon(tp), "La cantidad de pokemones disponibles es correcta.");
+
+	printf("%s", pokemones_disponibles);
+
+    free(pokemones_disponibles);
+
+    tp_destruir(tp);
+}
+
+void cuando_se_solicita_pokemones_disponibles_no_se_muestran_los_pokemones_ya_seleccionados()
+{
+	TP* tp = tp_crear(ARCHIVO_PRUEBA);
+
+	tp_seleccionar_pokemon(tp, JUGADOR_1, "pikachu");
+	tp_seleccionar_pokemon(tp, JUGADOR_2, "charizard");
+
+
+    char* pokemones_disponibles = tp_nombres_disponibles(tp);
+
+    pa2m_afirmar(pokemones_disponibles != NULL, "Los pokemones disponibles son correctos.");
+
+    size_t cantidad_pokemones = 0;
+    for (size_t i = 0; pokemones_disponibles[i] != '\0'; i++) {
+        if (pokemones_disponibles[i] == ',') {
+            cantidad_pokemones++;
+        }
+    }
+    cantidad_pokemones++;
+
+    pa2m_afirmar(cantidad_pokemones == tp_cantidad_pokemon(tp) - 2, "La cantidad de pokemones disponibles es correcta.");
 
 	printf("%s", pokemones_disponibles);
 
@@ -390,9 +420,11 @@ void cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido()
 	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 3);
 	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 1);
 
-	printf("\n%s", tp_obstaculos_pista(tp, JUGADOR_2));
-
 	char* tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
+
+	char* pista = tp_obstaculos_pista(tp, JUGADOR_2);
+
+	printf("%s", pista);
 
 	unsigned tiempo_pista = tp_calcular_tiempo_pista(tp, JUGADOR_2);
 
@@ -405,13 +437,198 @@ void cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido()
 
 	free(tiempos_obstaculos);
 
+	free(pista);
+
 	tp_destruir(tp);
 
 }
 
 
+
+
+bool imprimir_texto(void* texto) 
+{
+	char* mi_texto = texto;
+	printf("Se imprime: %s\n", mi_texto);
+	return true;
+}
+
+bool imprimir_resultado(void* operacion)
+{
+	int resultado = *(int*)operacion;
+	printf("El resultado es: %i\n", resultado);
+	return true; 
+}
+
+
+bool imprimir_resta(void* contexto) {
+    int* numeros = (int*)contexto;
+    printf("Resta: %d\n", numeros[0] - numeros[1]);
+    return true;
+}
+
+bool imprimir_multiplicacion(void* contexto) {
+    int* numeros = (int*)contexto;
+    printf("Multiplicación: %d\n", numeros[0] * numeros[1]);
+    return true;
+}
+
+bool imprimir_division(void* contexto) {
+    int* numeros = (int*)contexto;
+    if (numeros[1] == 0) {
+        printf("División por cero\n");
+        return false;
+    }
+    printf("División: %d\n", numeros[0] / numeros[1]);
+    return true;
+}
+
+
+
+
+
+void cuando_se_crea_un_menu_se_devuelve_correctamente_un_menu()
+{
+	menu_t* menu = menu_crear();
+
+	pa2m_afirmar(menu != NULL, "Se crea un menu correctamente.");
+
+	menu_destruir(menu);
+}
+
+
+void cuando_se_agrega_un_comando_con_argumentos_inválidos_se_espera_que_no_se_cree_el_comando()
+{
+    menu_agregar_comando(NULL, "imprimir_texto", "Imprime texto", imprimir_texto);
+    pa2m_afirmar(true, "Se intentó agregar un comando con menú nulo.");
+    pa2m_afirmar(menu_contiene_comando(NULL, "imprimir_texto") == false, "El comando no es agregado al menú.");
+
+    menu_t* menu = menu_crear();
+    pa2m_afirmar(menu != NULL, "Se crea un menú correctamente.");
+
+    menu_agregar_comando(menu, NULL, "Imprime resultado operación", imprimir_resultado);
+    pa2m_afirmar(true, "Se intentó agregar un comando con nombre nulo.");
+    pa2m_afirmar(!menu_contiene_comando(menu, NULL), "El comando no es agregado al menú.");
+
+    menu_agregar_comando(menu, "imprimir_suma", NULL, imprimir_resultado);
+    pa2m_afirmar(true, "Se intentó agregar un comando con descripción nula.");
+    pa2m_afirmar(!menu_contiene_comando(menu, "imprimir_suma"), "El comando no es agregado al menú.");
+
+    menu_agregar_comando(menu, "imprimir_resta", "Imprime resultado de una resta", NULL);
+    pa2m_afirmar(true, "Se intentó agregar un comando con función nula.");
+    pa2m_afirmar(!menu_contiene_comando(menu, "imprimir_resta"), "El comando no es agregado al menú.");
+
+    menu_destruir(menu);
+}
+
+
+
+void cuando_se_agrega_un_comando_válido_se_espera_que_se_cree_el_comando() 
+{
+	menu_t* menu = menu_crear();
+
+	pa2m_afirmar(menu != NULL, "Se crea un menu correctamente.");
+	
+	menu_agregar_comando(menu, "imprimir_texto", "Imprime texto", imprimir_texto);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(menu_contiene_comando(menu, "imprimir_texto"), "El comando es agregado correctamente al menu.");
+
+
+	menu_agregar_comando(menu, "imprimir_resultado", "Imprime resutlado operación", imprimir_resultado);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(menu_contiene_comando(menu, "imprimir_resultado"), "El comando es agregado correctamente al menu.");
+
+	menu_destruir(menu);
+}
+
+void cuando_se_ejecuta_un_comando_existente_se_devuelve_menu_ok() {
+    menu_t* menu = menu_crear();
+
+    menu_agregar_comando(menu, "imprimir_texto", "Imprime el texto dado", imprimir_texto);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_texto"), "El comando 'imprimir_texto' es agregado correctamente al menú.");
+    pa2m_afirmar(menu_ejecutar_comando(menu, "imprimir_texto", "Hola, mundo!") == MENU_OK, "Se ejecuta correctamente el comando 'imprimir_texto'.");
+
+    menu_agregar_comando(menu, "imprimir_resultado", "Imprime el resultado de la operación", imprimir_resultado);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_resultado"), "El comando 'imprimir_resultado' es agregado correctamente al menú.");
+    int resultado = 42;
+    pa2m_afirmar(menu_ejecutar_comando(menu, "imprimir_resultado", &resultado) == MENU_OK, "Se ejecuta correctamente el comando 'imprimir_resultado'.");
+
+    menu_agregar_comando(menu, "imprimir_resta", "Imprime la resta de dos números", imprimir_resta);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_resta"), "El comando 'imprimir_resta' es agregado correctamente al menú.");
+    int resta[2] = {10, 4};
+    pa2m_afirmar(menu_ejecutar_comando(menu, "imprimir_resta", resta) == MENU_OK, "Se ejecuta correctamente el comando 'imprimir_resta'.");
+
+    menu_agregar_comando(menu, "imprimir_multiplicacion", "Imprime la multiplicación de dos números", imprimir_multiplicacion);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_multiplicacion"), "El comando 'imprimir_multiplicacion' es agregado correctamente al menú.");
+    int multiplicacion[2] = {7, 6};
+    pa2m_afirmar(menu_ejecutar_comando(menu, "imprimir_multiplicacion", multiplicacion) == MENU_OK, "Se ejecuta correctamente el comando 'imprimir_multiplicacion'.");
+
+    menu_agregar_comando(menu, "imprimir_division", "Imprime la división de dos números", imprimir_division);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_division"), "El comando 'imprimir_division' es agregado correctamente al menú.");
+    int division[2] = {20, 5};
+    pa2m_afirmar(menu_ejecutar_comando(menu, "imprimir_division", division) == MENU_OK, "Se ejecuta correctamente el comando 'imprimir_division'.");
+
+    menu_destruir(menu);
+}
+
+
+void cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente() {
+	menu_t* menu = menu_crear();
+
+	int suma = 2000 + 24;
+
+	pa2m_afirmar(menu_ejecutar_comando(menu, NULL, &suma) == COMANDO_INEXISTENTE, "No se ejecuta un comando inexistente.");
+
+
+	menu_destruir(menu);
+}
+
+
+
+
+void cuando_se_muestran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones() {
+    menu_t* menu = menu_crear();
+    if (!menu) {
+        printf("Error al crear el menú.\n");
+        return;
+    }
+
+    menu_agregar_comando(menu, "imprimir_texto", "Imprime el texto dado", imprimir_texto);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_texto"), "El comando 'imprimir_texto' es agregado correctamente al menú.");
+
+    menu_agregar_comando(menu, "imprimir_resta", "Imprime la resta de dos números", imprimir_resta);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_resta"), "El comando 'imprimir_resta' es agregado correctamente al menú.");
+
+    menu_agregar_comando(menu, "imprimir_multiplicacion", "Imprime la multiplicación de dos números", imprimir_multiplicacion);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_multiplicacion"), "El comando 'imprimir_multiplicacion' es agregado correctamente al menú.");
+
+    menu_agregar_comando(menu, "imprimir_division", "Imprime la división de dos números", imprimir_division);
+    pa2m_afirmar(true, "Se agrega un comando.");
+    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_division"), "El comando 'imprimir_division' es agregado correctamente al menú.");
+
+
+
+    
+    mostrar_comandos(menu);
+    pa2m_afirmar(true, "Se muestran todos los comandos agregados y su descripción.");
+
+    menu_destruir(menu);
+}
+
+
+
 int main()
 {	
+	pa2m_nuevo_grupo("PRUEBAS DE TP");
+
 	pa2m_nuevo_grupo("Creación de tp con archivo nulo");
 	cuando_se_crea_tp_nulo_se_devuelve_null();
 	cuando_se_crea_tp_nulo_se_esperan_cero_pokemones();
@@ -431,6 +648,7 @@ int main()
 	
 	pa2m_nuevo_grupo("Disponibilidad de pokemones");
 	cuando_se_solicita_pokemones_disponibles_se_devuelve_un_string_con_los_pokemones();
+	cuando_se_solicita_pokemones_disponibles_no_se_muestran_los_pokemones_ya_seleccionados();
 
 	pa2m_nuevo_grupo("Selección de pokemon");
 	cuando_se_selecciona_un_pokemon_para_jugador_sin_pokemon_se_devuelve_true();
@@ -457,6 +675,23 @@ int main()
 
 	pa2m_nuevo_grupo("Calculo de tiempo total de la pista");
 	cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido();
+
+	printf("\n\n\n");
+	pa2m_nuevo_grupo("PRUEBAS DE MENU");
+
+	pa2m_nuevo_grupo("Creación de menú");
+	cuando_se_crea_un_menu_se_devuelve_correctamente_un_menu();
+
+	pa2m_nuevo_grupo("Agregar un comando");
+	cuando_se_agrega_un_comando_con_argumentos_inválidos_se_espera_que_no_se_cree_el_comando();
+	cuando_se_agrega_un_comando_válido_se_espera_que_se_cree_el_comando();
+
+	pa2m_nuevo_grupo("Ejecutar un comando");
+	cuando_se_ejecuta_un_comando_existente_se_devuelve_menu_ok();
+	cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente();
+
+	pa2m_nuevo_grupo("Mostrar los comandos");
+	cuando_se_muestran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones();
 
 
 
