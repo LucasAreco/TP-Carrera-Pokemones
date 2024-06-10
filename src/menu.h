@@ -16,7 +16,7 @@ bool menu_contiene_comando(menu_t* menu, const char* comando);
 
 MENU_RESULTADO menu_ejecutar_comando(menu_t *menu, const char *comando, void *contexto);
 
-void mostrar_comandos(menu_t* menu);
+void menu_con_cada_comando(menu_t* menu, bool (*f)(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux), void *aux);
 
 void menu_destruir(menu_t *m);
 

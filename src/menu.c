@@ -54,7 +54,6 @@ void menu_agregar_comando(menu_t* menu, const char* comando, char* descripcion, 
     }
 }
 
-
 bool menu_contiene_comando(menu_t* menu, const char* comando)
 {
     if (!menu || !hash_contiene(menu->comandos, comando)) {
@@ -79,20 +78,33 @@ MENU_RESULTADO menu_ejecutar_comando(menu_t *menu, const char *comando, void *co
 }
 
 
-bool imprimir_info_comandos(const char* comando, void* valor, void* aux)
-{
-    comando_info_t* info_actual = valor;
 
-    printf(">%s \t\t %s.\n", comando, info_actual->descripcion);
-    return true;
+struct datos_iterador {
+    void* aux;
+    bool (*f)(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux);
+};
+
+bool funcion_para_iterador(const char *clave, void* valor, void* aux) {
+    comando_info_t* info = valor;
+    struct datos_iterador* datos = aux;
+    return datos->f(clave, info->descripcion, info->funcion, datos->aux);
 }
 
-void mostrar_comandos(menu_t* menu) {
-    if (!menu) {
+
+
+void menu_con_cada_comando(menu_t* menu, bool (*f)(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux), void *aux) {
+    if (!menu || !f) {
         return;
     }
-    hash_con_cada_clave(menu->comandos, imprimir_info_comandos, NULL);
+
+    struct datos_iterador datos;
+    datos.aux = aux;
+    datos.f = f;
+
+    hash_con_cada_clave(menu->comandos, funcion_para_iterador, &datos);
 }
+
+
 
 
 void destructor_info_comandos(void* comando_info)

@@ -11,7 +11,7 @@ char* leer_entrada_usuario()
 	char* entrada[200];
 	char* leido = fgets(entrada, sizeof(entrada), stdin);
 
-	return leido
+	return leido;
 }
 
 
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 	//Se recomienda pasar el archivo de texto con los pokemon como argumento al ejecutar el programa
 
 	//crear el juego
-	// TP*	tp = tp_crear(argv[1]);
+	TP*	tp = tp_crear(argv[1]);
 	//mostrar menues
 	//correr carrera
 	//etc

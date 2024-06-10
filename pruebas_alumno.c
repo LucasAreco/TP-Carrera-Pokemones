@@ -589,14 +589,17 @@ void cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente() 
 }
 
 
+bool imprimir_comando_descripcion(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux) {
+    printf("Comando: %s\nDescripción: %s\n", clave, descripcion);
+    return true; // Continuar la iteración
+}
 
 
-void cuando_se_muestran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones() {
+
+
+void cuando_se_iteran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones() {
     menu_t* menu = menu_crear();
-    if (!menu) {
-        printf("Error al crear el menú.\n");
-        return;
-    }
+
 
     menu_agregar_comando(menu, "imprimir_texto", "Imprime el texto dado", imprimir_texto);
     pa2m_afirmar(true, "Se agrega un comando.");
@@ -617,8 +620,9 @@ void cuando_se_muestran_los_comandos_se_espera_que_se_impriman_los_comandos_y_la
 
 
     
-    mostrar_comandos(menu);
+
     pa2m_afirmar(true, "Se muestran todos los comandos agregados y su descripción.");
+    menu_con_cada_comando(menu, imprimir_comando_descripcion, NULL);
 
     menu_destruir(menu);
 }
@@ -690,8 +694,12 @@ int main()
 	cuando_se_ejecuta_un_comando_existente_se_devuelve_menu_ok();
 	cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente();
 
-	pa2m_nuevo_grupo("Mostrar los comandos");
-	cuando_se_muestran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones();
+	pa2m_nuevo_grupo("Iterar comandos");
+	cuando_se_iteran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones();
+
+
+
+
 
 
 
