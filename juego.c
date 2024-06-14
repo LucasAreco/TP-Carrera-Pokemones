@@ -1,12 +1,11 @@
 #include "src/tp.h"
-#include "src/menu.h"
+#include "src/gestor_fases.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-#include "src/lista.h"
-#include "src/gestor_fases.h"
+#include "src/split.h"
 
 // Definiciones de estructuras y funciones
 typedef enum {FACIL, NORMAL, DIFICIL, IMPOSIBLE} DIFICULTAD;
@@ -55,14 +54,94 @@ void imprimir_interfaz_dificultad(void* contexto) {
 }
 
 
-void imprimir_interfaz_seleccion_pokemones(void* contexto) {
 
-    printf("===================================================================");
+const struct pokemon_info* obtener_pokemon_aleatorio(estado_t* estado) {
+    char* pokemones_disponibles = tp_nombres_disponibles(estado->juego);
+    if (!pokemones_disponibles) {
+        return NULL;
+    }
 
-    printf("\n\n\n\nFase gestion de pokemon\n\n\n\n");
+    char separador = ',';
+    char** nombres_disponibles = split(pokemones_disponibles, separador);
 
-    printf("El pokemon contra el que competiras sera pepito. LPMMMMMMMMMMMM");
+    int count = tp_cantidad_pokemon(estado->juego);
+
+    if (count <= 0) {
+        // Liberar la memoria si no hay pokemones disponibles
+        free(nombres_disponibles);
+        free(pokemones_disponibles);
+        return NULL;
+    }
+
+    srand((unsigned int) time(NULL));
+
+    int indice_random = rand() % count;
+    char* nombre_random = nombres_disponibles[indice_random];
+
+    const struct pokemon_info* pokemon_oponente = tp_buscar_pokemon(estado->juego, nombre_random);
+
+    // Liberar la memoria asignada por split
+    for (int i = 0; i < count; i++) {
+        free(nombres_disponibles[i]);
+    }
+    free(nombres_disponibles);
+    free(pokemones_disponibles);
+
+    return pokemon_oponente;
 }
+
+const struct pokemon_info* asignar_pokemon_oponente(estado_t* estado) {
+    const struct pokemon_info* pokemon_oponente = obtener_pokemon_aleatorio(estado);
+    if (!pokemon_oponente) {
+        return NULL;
+    }
+
+    if (tp_seleccionar_pokemon(estado->juego, JUGADOR_2, pokemon_oponente->nombre)) {
+        return pokemon_oponente;
+    }
+
+    return NULL;
+}
+
+void imprimir_interfaz_seleccion_pokemones(void* contexto) {
+    estado_t* estado = (estado_t*)contexto;
+    const struct pokemon_info* pokemon_oponente = asignar_pokemon_oponente(estado);
+    if (pokemon_oponente) {
+        printf("Tu oponente es: %s\n", pokemon_oponente->nombre);
+        printf("Atributos del pokemon oponente.\n\n");
+        printf("- Fuerza: %i puntos.\n", pokemon_oponente->fuerza);
+        printf("- Destreza: %i puntos.\n", pokemon_oponente->destreza);
+        printf("- Inteligencia: %i puntos.\n", pokemon_oponente->inteligencia);
+    } else {
+        printf("No se pudo asignar un Pokémon al oponente.\n");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 fase_t* seleccionar_dificultad() {
     fase_t* fase_dificultad = inicializar_fase();
@@ -97,7 +176,12 @@ fase_t* gestion_pokemones() {
 
 int main(int argc, char const *argv[]) {
     TP* tp = tp_crear(argv[1]);
+
     printf("Bienvenido, ingrese comando a continuación o escriba ayuda\n\n");
+
+
+    srand((unsigned int) time(NULL));
+    // Seleccionar un nombre aleatorio
 
     gestor_fases_t* gestor = inicializar_gestor_fases();
     if (!gestor) {
@@ -132,7 +216,7 @@ int main(int argc, char const *argv[]) {
             } else if (estado.continuar) {
                 avanzar_fase(gestor);
                 estado.fase_actual =  obtener_fase(gestor, gestor->numero_fase_actual);
-                estado.fase_actual->contenido(NULL);
+                estado.fase_actual->contenido(&estado);
             } else {
                 estado.continuar = false;
             }

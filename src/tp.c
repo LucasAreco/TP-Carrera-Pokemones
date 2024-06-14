@@ -69,6 +69,7 @@ void convertir_primera_mayuscula(char* cadena) {
     }
 }
 
+
 int comparar_pokemon(void *a, void *b) {
     const struct pokemon_info *p1 = (const struct pokemon_info *)a;
     const struct pokemon_info *p2 = (const struct pokemon_info *)b;
@@ -92,9 +93,6 @@ char *copiar_nombre(const char *clave)
 }
 
 
-
-
-
 void inicializar_jugadores(TP* tp) 
 {
 	jugador_t* usuario = malloc(sizeof(jugador_t));
@@ -104,7 +102,7 @@ void inicializar_jugadores(TP* tp)
 
 	jugador_t* computadora = malloc(sizeof(jugador_t));
 	if (!computadora) {
-		free (usuario);
+		free(usuario);
 		return;
 	}
 
