@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <stdio.h>
 #include "menu.h"
 #include "hash.h"
 #include "tp.h"
