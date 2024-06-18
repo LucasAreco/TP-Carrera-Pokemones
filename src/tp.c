@@ -446,7 +446,7 @@ char *tp_obstaculos_pista(TP *tp, enum TP_JUGADOR jugador)
     }
 
 	cadena.palabras[0] = '\0';
-    cadena.separador = '\0';
+    cadena.separador = ',';
 	cadena.hay_conversion = true;
 
 
