@@ -532,17 +532,9 @@ fase_t* armar_pista_del_usuario() {
 
     menu_t* menu_pista_usuario = fase_pista_usuario->menu;
 
-
-
-
     menu_agregar_comando(menu_pista_usuario, "m", "Descripción de la entrada", modificar_pista);
-
-
     menu_agregar_comando(menu_pista_usuario, "q", "Salir del juego.", salir);
     menu_agregar_comando(menu_pista_usuario, "c", "Continuar el juego", continuar);
-    menu_agregar_comando(menu_pista_usuario, "b", "Volver a mostrar menu", volver);
-
-
 
     return fase_pista_usuario;
 }
@@ -553,16 +545,42 @@ fase_t* fin_del_juego() {
     if (!juego_finalizado) {
         return NULL;
     }
-
     return juego_finalizado;
 
+}
+
+void mostrar_resultado_carrera(void* contexto) {
+    estado_t* estado = (estado_t*)contexto;
+    printf("%s", tp_tiempo_por_obstaculo(estado->juego, JUGADOR_1));
+    unsigned tiempo_usuario = tp_calcular_tiempo_pista(estado->juego, JUGADOR_1);
+    unsigned tiempo_oponente = tp_calcular_tiempo_pista(estado->juego, JUGADOR_2);   
+
+    printf("Tiempo usuario: %u", tiempo_usuario);
+    printf("Tiempo oponente: %u", tiempo_oponente);
+
+}
+
+
+
+fase_t* correr_carrera() {
+    fase_t* fase_carrera = inicializar_fase();
+    if (!fase_carrera) {
+        return NULL;
+    }
+
+    menu_t* menu_carrera = fase_carrera->menu;
+
+    menu_agregar_comando(menu_carrera, "q", "Salir del juego.", salir);
+    menu_agregar_comando(menu_carrera, "c", "Continuar el juego", continuar);
+
+    return fase_carrera;
 }
 
 
 int main(int argc, char const *argv[]) {
     TP* tp = tp_crear(argv[1]);
     if (!tp) {
-        printf("No pasaste un archivo válido");
+        printf("No pasaste un archivo válido en formato txt.");
         return 0;
     }
 
@@ -596,7 +614,9 @@ int main(int argc, char const *argv[]) {
     agregar_fase(gestor, armado_de_atributos_oponente(), mostrar_interfaz_info_oponente);
     agregar_fase(gestor, inicializar_pokemon_usuario(estado.juego), mostrar_info_pokemon_usuario);
     agregar_fase(gestor, armar_pista_del_usuario(), mostrar_info_armado_pista);
+    agregar_fase(gestor, correr_carrera(), mostrar_resultado_carrera);
     agregar_fase(gestor, fin_del_juego(), mostrar_interfaz_fin_del_juego);
+
 
 
     estado.fase_actual->contenido(NULL);

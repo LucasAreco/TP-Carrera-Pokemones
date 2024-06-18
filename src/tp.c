@@ -132,7 +132,28 @@ void inicializar_jugadores(TP* tp)
 
 
 
+bool archivo_es_txt(const char* nombre) {
+    if (!nombre) {
+        return false;
+    }
+    char** partes_nombre = split(nombre, '.');
+    if (!partes_nombre) {
+        return false;
+    }
 
+    if (strcmp(partes_nombre[1], "txt") == 0) {
+        free(partes_nombre[0]);
+        free(partes_nombre[1]);
+        free(partes_nombre);
+        return true;
+    }
+
+    free(partes_nombre[0]);
+    free(partes_nombre[1]);
+    free(partes_nombre);
+
+    return false;
+}
 
 
 
@@ -140,7 +161,7 @@ TP *tp_crear(const char *nombre_archivo)
 {
 	char registro[100];
 
-	if (!nombre_archivo) {
+	if (!archivo_es_txt(nombre_archivo)) {
         return NULL;
     }
 
@@ -517,17 +538,14 @@ char* agregar_numero_a_cadena(char* cadena, int numero) {
 
 
 
-char* con_cada_obstaculo(jugador_t* jugador, lista_t* obstaculos, char* cadena, int* tiempo_pista)
-{
+char* con_cada_obstaculo(jugador_t* jugador, lista_t* obstaculos, char* cadena, unsigned* tiempo_pista) {
     lista_iterador_t* iterador = lista_iterador_crear(obstaculos);
     if (!iterador) {
         return NULL;
     }
 
     int tiempo_obstaculo = 0;
-
     enum TP_OBSTACULO obstaculo_anterior = -1;
-
     int cantidad_mismos_consecutivos = 0;
 
     while (lista_iterador_tiene_siguiente(iterador)) {
@@ -536,7 +554,7 @@ char* con_cada_obstaculo(jugador_t* jugador, lista_t* obstaculos, char* cadena, 
 
         tiempo_obstaculo = 10 - atributo_pokemon;
 
-        if (obstaculo_anterior  == *obstaculo_actual) {
+        if (obstaculo_anterior == *obstaculo_actual) {
             cantidad_mismos_consecutivos++;
             tiempo_obstaculo -= cantidad_mismos_consecutivos;
         } else {
@@ -550,36 +568,31 @@ char* con_cada_obstaculo(jugador_t* jugador, lista_t* obstaculos, char* cadena, 
         }
 
         if (tiempo_pista) {
-            jugador->tiempo_pista += (unsigned)tiempo_obstaculo_modulo;
+            *tiempo_pista += (unsigned)tiempo_obstaculo_modulo;
         }
 
         tiempo_obstaculo = 0;
-
         obstaculo_anterior = *obstaculo_actual;    
-
-
         lista_iterador_avanzar(iterador);
     }
 
     lista_iterador_destruir(iterador);
-
     return cadena;
-
 }
 
 
 
 
 
-char *tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador) {
+char* tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador) {
     if (!tp) {
-        return 0;
+        return NULL;
     }
 
     jugador_t *jugador_actual = tp->jugadores[jugador];
     lista_t *pista_actual = jugador_actual->obstaculos;
 
-    if (!pista_actual || !jugador_actual ||!jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
+    if (!pista_actual || !jugador_actual || !jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
         return NULL;
     }
 
@@ -590,8 +603,6 @@ char *tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador) {
     cadena[0] = '\0';
 
     cadena = con_cada_obstaculo(jugador_actual, pista_actual, cadena, NULL);
-
-   
     return cadena;
 }
 
@@ -599,24 +610,22 @@ char *tp_tiempo_por_obstaculo(TP *tp, enum TP_JUGADOR jugador) {
 
 
 
-unsigned tp_calcular_tiempo_pista(TP *tp, enum TP_JUGADOR jugador)
-{
-    if (!tp || !jugador) {
+unsigned tp_calcular_tiempo_pista(TP *tp, enum TP_JUGADOR jugador) {
+    if (!tp || !tp->jugadores[jugador]) {
         return 0;
     }
 
     jugador_t *jugador_actual = tp->jugadores[jugador];
     lista_t *pista_actual = jugador_actual->obstaculos;
 
-    if (!pista_actual || !jugador_actual ||!jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
+    if (!pista_actual || !jugador_actual || !jugador_actual->pokemon_elegido || lista_tamanio(pista_actual) == 0) {
         return 0;
     }
 
-    con_cada_obstaculo(jugador_actual, jugador_actual->obstaculos, NULL, (int*)&jugador_actual->tiempo_pista);
-
-	return jugador_actual->tiempo_pista;
+    jugador_actual->tiempo_pista = 0;  // Inicializa el tiempo a 0
+    con_cada_obstaculo(jugador_actual, pista_actual, NULL, &jugador_actual->tiempo_pista);
+    return jugador_actual->tiempo_pista;
 }
-
 
 
 void tp_destruir(TP *tp) {
