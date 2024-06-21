@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 
 #define MODO_LECTURA "r"
@@ -14,7 +15,6 @@
 #define SIMBOLO_OBSTACULO_FUERZA "F"
 #define SIMBOLO_OBSTACULO_DESTREZA "D"
 #define SIMBOLO_OBSTACULO_INTELIGENCIA "I"
-
 
 
 typedef struct jugador {
@@ -40,34 +40,20 @@ typedef struct cadena {
 
 
 
-// bool imprimir_recorrido(void *elemento, void *nulo) {
-//     struct pokemon_info *pokemon = (struct pokemon_info *)elemento;
-//     printf(" -> %s, %i, %i, %i\n", pokemon->nombre, pokemon->fuerza, pokemon->destreza, pokemon->inteligencia);    
-//     return true; // Devolvemos true para continuar el recorrido
-// }
-
-
-// bool imprimir_obstaculo(void *elemento, void *contexto) {
-//     enum TP_OBSTACULO *obstaculo = (enum TP_OBSTACULO *)elemento;
-//     printf("%d - ", *obstaculo);
-//     return true; 
-// }
 
 void convertir_primera_mayuscula(char* cadena) {
     if (!cadena|| *cadena == '\0') {
-        return;  
+        return;
     }
 
-    if (*cadena >= 'a' && *cadena <= 'z') {
-        *cadena -= ('a' - 'A');
-    }
+    *cadena = (char)toupper((unsigned char)*cadena);
 
     for (char* c = cadena + 1; *c != '\0'; ++c) {
-        if (*c >= 'A' && *c <= 'Z') {
-            *c += ('a' - 'A');
-        }
+        *c = (char)tolower((unsigned char)*c);
     }
 }
+
+
 
 
 int comparar_pokemon(void *a, void *b) {
@@ -100,34 +86,34 @@ void inicializar_jugadores(TP* tp)
 		return;
 	}
 
-	jugador_t* computadora = malloc(sizeof(jugador_t));
-	if (!computadora) {
+	jugador_t* oponente = malloc(sizeof(jugador_t));
+	if (!oponente) {
 		free(usuario);
 		return;
 	}
 
 	usuario->tipo_jugador = JUGADOR_1;
-	computadora->tipo_jugador = JUGADOR_2;
+	oponente->tipo_jugador = JUGADOR_2;
 
 	usuario->pokemon_elegido = NULL;
-	computadora->pokemon_elegido = NULL;
+	oponente->pokemon_elegido = NULL;
 
     usuario->tiempo_pista = 0;
-    computadora->tiempo_pista = 0;
+    oponente->tiempo_pista = 0;
 
 	usuario->obstaculos = lista_crear();
 	if (!usuario->obstaculos) {
 		return;
 	}
 
-	computadora->obstaculos = lista_crear();
-	if (!computadora->obstaculos) {
+	oponente->obstaculos = lista_crear();
+	if (!oponente->obstaculos) {
         free(usuario->obstaculos);
 		return;
 	}
 
 	tp->jugadores[JUGADOR_1] = usuario;
-	tp->jugadores[JUGADOR_2] = computadora;
+	tp->jugadores[JUGADOR_2] = oponente;
 }
 
 
@@ -213,7 +199,7 @@ TP *tp_crear(const char *nombre_archivo)
 		datos_pokemon->destreza = atoi(partes_registro[2]);
 		datos_pokemon->inteligencia = atoi(partes_registro[3]);
 
-		convertir_primera_mayuscula(datos_pokemon->nombre);
+	    convertir_primera_mayuscula(datos_pokemon->nombre);
 
 		const struct pokemon_info* nuevo_pokemon = datos_pokemon;
 		
@@ -368,9 +354,10 @@ bool tp_seleccionar_pokemon(TP *tp, enum TP_JUGADOR jugador, const char *nombre)
     if (otro_jugador->pokemon_elegido && 
         strcmp(otro_jugador->pokemon_elegido->nombre, pokemon_seleccionado->nombre) == 0) {
         return false; 
+    } else {
+        jugador_actual->pokemon_elegido = pokemon_seleccionado;
     }
 
-    jugador_actual->pokemon_elegido = pokemon_seleccionado;
 
     return true;
 }

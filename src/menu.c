@@ -112,6 +112,7 @@ void destructor_info_comandos(void* comando_info)
     free(info_comando);
 }
 
+
 void menu_destruir(menu_t* menu) 
 {
     hash_destruir_todo(menu->comandos, destructor_info_comandos);

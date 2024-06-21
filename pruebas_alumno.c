@@ -591,7 +591,7 @@ void cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente() 
 
 bool imprimir_comando_descripcion(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux) {
     printf("Comando: %s\nDescripción: %s\n", clave, descripcion);
-    return true; // Continuar la iteración
+    return true;
 }
 
 
