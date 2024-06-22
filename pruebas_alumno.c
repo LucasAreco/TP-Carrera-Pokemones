@@ -509,6 +509,51 @@ void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_considere_sus_anter
 	tp_destruir(tp);
 }
 
+void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_sean_correctos()
+{
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
+
+	char *poke = "Caterpie";
+	char *poke_2 = "dragonite";
+
+	tp_seleccionar_pokemon(tp, JUGADOR_1, poke);
+	tp_seleccionar_pokemon(tp, JUGADOR_2, poke_2);
+
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 3);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 4);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 5);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 6);
+	tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 7);
+
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 0);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 1);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 2);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 3);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 4);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 5);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 6);
+	tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 7);
+
+	char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_1);
+	char *tiempos_obstaculos_2 = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
+
+	pa2m_afirmar(
+		tiempos_obstaculos != NULL,
+		"Se calculan los tiempos de los obstaculos correctamente para Caeterpie (IFDDDDII).");
+
+	printf("%s\n", tiempos_obstaculos);
+
+	printf("%s", tiempos_obstaculos_2);
+
+	free(tiempos_obstaculos);
+	free(tiempos_obstaculos_2);
+
+	tp_destruir(tp);
+}
+
 void cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido()
 {
 	TP *tp = tp_crear(ARCHIVO_PRUEBA);
@@ -805,6 +850,7 @@ int main()
 	pa2m_nuevo_grupo("Calculo de tiempo por obstaculo");
 	cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_un_string_csv();
 	cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_considere_sus_anteriores();
+	cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_sean_correctos();
 
 	pa2m_nuevo_grupo("Calculo de tiempo total de la pista");
 	cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido();

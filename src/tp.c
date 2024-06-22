@@ -619,6 +619,10 @@ char *con_cada_obstaculo(jugador_t *jugador, lista_t *obstaculos, char *cadena,
 			cantidad_mismos_consecutivos = 0;
 		}
 
+		if (tiempo_obstaculo < 0) {
+			tiempo_obstaculo = 0;
+		}
+
 		int tiempo_obstaculo_modulo = abs(tiempo_obstaculo);
 
 		if (cadena) {
