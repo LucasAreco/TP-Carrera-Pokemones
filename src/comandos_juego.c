@@ -265,10 +265,7 @@ bool seleccion_pokemon_usuario(void *e)
 		mostrar_info_pokemon(pokemon_usuario);
 		printf("\nSi el pokemon seleccionado es correcto, oprime 'c' para continuar o ingresa otro nombre:\n");
 		return true;
-	} else {
-		printf("El nombre del pokemon ya ha sido seleccionado.");
-	}
-
+	} 
 	return false;
 }
 

@@ -253,7 +253,7 @@ void mostrar_resultado_carrera(void *contexto)
     } else if (puntaje_final == 100) {
         printf("\n\n¡Felicitaciones! Los pokemones igualaron sus tiempos.\n");
     } else {
-        printf("\n\nLos pokemones no acercaron sus tiempos. Vuelve a intentarlo.");
+        printf("\n\nLos pokemones no acercaron sus tiempos. El puntaje final debe ser cercano a 100. Vuelve a intentarlo.");
     }
 
 	printf("\n\nPuntaje final: %u\n\n", puntaje_final);

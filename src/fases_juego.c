@@ -5,6 +5,13 @@
 #include "split.h"
 
 
+void agregar_comandos_base_en_menu(menu_t* menu) {
+	menu_agregar_comando(menu, "H", "Se imprime ayuda del menu.", mostrar_comando_y_descripcion);
+	menu_agregar_comando(menu, "Q", "Salir del juego.", salir);
+
+
+}
+
 fase_t* inicio_juego() {
 	fase_t* fase_inicio = inicializar_fase();
 	if (!fase_inicio) {
@@ -13,11 +20,9 @@ fase_t* inicio_juego() {
 
 	menu_t* menu_inicio = fase_inicio->menu;
 	
-	menu_agregar_comando(menu_inicio, "Q", "Salir del juego.", salir);
 	menu_agregar_comando(menu_inicio, "C", "Continuar el juego", pasar_a_seleccionar_dificultad);
-	menu_agregar_comando(menu_inicio, "H", "Se imprime ayuda del menu.", mostrar_comando_y_descripcion);
 	menu_agregar_comando(menu_inicio, "?", "Acerca del juego", mostrar_acerca_del_juego);
-
+	agregar_comandos_base_en_menu(menu_inicio);
 
 	fase_inicio->contenido = mostrar_interfaz_inicio;
 
@@ -44,10 +49,7 @@ fase_t *seleccionar_dificultad()
 	menu_agregar_comando(menu_dificultades, "4",
 			     "Elegir dificultad 'Imposible'.",
 			     inicializar_dificultad);
-	menu_agregar_comando(menu_dificultades, "Q", "Salir del juego.", salir);
-	menu_agregar_comando(menu_dificultades, "H",
-			     "Se imprime ayuda del menu.",
-			     mostrar_comando_y_descripcion);
+	agregar_comandos_base_en_menu(menu_dificultades);
 
 	fase_dificultad->contenido = mostrar_interfaz_dificultad;
 
@@ -90,11 +92,9 @@ fase_t *inicializar_pokemon_usuario(estado_t *estado)
 				     seleccion_pokemon_usuario);
 	}
 
-	menu_agregar_comando(menu_usuario, "Q", "Salir del juego.", salir);
 	menu_agregar_comando(menu_usuario, "C", "Continuar el juego",
 			     pasar_a_armar_pista);
-	menu_agregar_comando(menu_usuario, "H", "Se imprime ayuda del menu.",
-			     mostrar_comando_y_descripcion);
+	agregar_comandos_base_en_menu(menu_usuario);
 
 	fase_usuario->contenido = mostrar_info_pokemon_usuario;
 
@@ -115,14 +115,10 @@ fase_t *armar_pista_del_usuario()
 	menu_t *menu_pista_usuario = fase_pista_usuario->menu;
 
 	menu_agregar_comando(menu_pista_usuario, "M",
-			     "Descripción de la entrada", modificar_pista);
-	menu_agregar_comando(menu_pista_usuario, "Q", "Salir del juego.",
-			     salir);
+			     "Habilitar modo modificar pista", modificar_pista);
 	menu_agregar_comando(menu_pista_usuario, "C", "Continuar el juego",
 			     pasar_a_correr_carrera);
-	menu_agregar_comando(menu_pista_usuario, "H",
-			     "Se imprime ayuda del menu.",
-			     mostrar_comando_y_descripcion);
+	agregar_comandos_base_en_menu(menu_pista_usuario);
 
 	fase_pista_usuario->contenido = mostrar_info_armado_pista;
 
@@ -138,13 +134,11 @@ fase_t *correr_carrera()
 
 	menu_t *menu_carrera = fase_carrera->menu;
 
-	menu_agregar_comando(menu_carrera, "Q", "Salir del juego.", salir);
-	menu_agregar_comando(menu_carrera, "F", "Continuar el juego",
+	menu_agregar_comando(menu_carrera, "F", "Finalizar el juego.",
 			     pasar_a_fin_juego);
 	menu_agregar_comando(menu_carrera, "A", "Volver a modificar la pista",
 			     volver_a_modificar_pista);
-	menu_agregar_comando(menu_carrera, "H", "Se imprime ayuda del menu.",
-			     mostrar_comando_y_descripcion);
+	agregar_comandos_base_en_menu(menu_carrera);
 
 	fase_carrera->contenido = mostrar_resultado_carrera;
 
