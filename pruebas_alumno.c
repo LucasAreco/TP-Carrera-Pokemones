@@ -6,12 +6,19 @@
 
 #define ARCHIVO_PRUEBA "pokemones.txt"
 #define ARCHIVO_VACIO "sinpokemones.txt"
+#define ARCHIVO_INVALIDO "pokemones_invalidos.txt"
 #define POKEMONES_TOTALES 25
 
 void cuando_se_crea_tp_nulo_se_devuelve_null()
 {
 	TP *tp = tp_crear(NULL);
 	pa2m_afirmar(!tp, "Crear un tp con archivo NULL, devuelve NULL.");
+}
+
+void cuando_se_crea_un_tp_con_archivo_invalido_devuelve_null()
+{
+	TP *tp = tp_crear(ARCHIVO_INVALIDO);
+	pa2m_afirmar(!tp, "Crear un tp con archivo invalido, devuelve NULL.");
 }
 
 void cuando_se_crea_tp_nulo_se_esperan_cero_pokemones()
@@ -754,9 +761,10 @@ int main()
 {
 	pa2m_nuevo_grupo("PRUEBAS DE TP");
 
-	pa2m_nuevo_grupo("Creación de tp con archivo nulo");
+	pa2m_nuevo_grupo("Creación de tp con archivo o invalido");
 	cuando_se_crea_tp_nulo_se_devuelve_null();
 	cuando_se_crea_tp_nulo_se_esperan_cero_pokemones();
+	cuando_se_crea_un_tp_con_archivo_invalido_devuelve_null();
 
 	pa2m_nuevo_grupo("Creación de tp");
 	cuando_se_crea_tp_válido_se_devuelve_el_tp();

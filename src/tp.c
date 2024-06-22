@@ -151,8 +151,23 @@ bool archivo_es_txt(const char *nombre)
 	return false;
 }
 
+bool verificar_conversion_entero(const char *cadena, int *resultado)
+{
+	*resultado = atoi(cadena);
+	if (*resultado == 0 && cadena[0] != '0') {
+		return false;
+	}
+
+	return true;
+}
+
 struct pokemon_info *cargar_datos_pokemon(char **partes_registro)
 {
+	if (!partes_registro[0] || !partes_registro[1] || !partes_registro[2] ||
+	    !partes_registro[3]) {
+		return NULL;
+	}
+
 	struct pokemon_info *datos_pokemon =
 		malloc(sizeof(struct pokemon_info));
 	if (!datos_pokemon) {
@@ -166,8 +181,28 @@ struct pokemon_info *cargar_datos_pokemon(char **partes_registro)
 	}
 
 	datos_pokemon->fuerza = atoi(partes_registro[1]);
+
+	if (!verificar_conversion_entero(partes_registro[1],
+					 &datos_pokemon->fuerza)) {
+		free(datos_pokemon->nombre);
+		free(datos_pokemon);
+		return NULL;
+	}
 	datos_pokemon->destreza = atoi(partes_registro[2]);
+	if (!verificar_conversion_entero(partes_registro[2],
+					 &datos_pokemon->destreza)) {
+		free(datos_pokemon->nombre);
+		free(datos_pokemon);
+		return NULL;
+	}
 	datos_pokemon->inteligencia = atoi(partes_registro[3]);
+
+	if (!verificar_conversion_entero(partes_registro[3],
+					 &datos_pokemon->inteligencia)) {
+		free(datos_pokemon->nombre);
+		free(datos_pokemon);
+		return NULL;
+	}
 
 	convertir_primera_mayuscula(datos_pokemon->nombre);
 
@@ -201,21 +236,6 @@ bool cargar_pokemones_en_tp(TP *tp, FILE *archivo)
 	}
 
 	return true;
-}
-
-const char *conversor_obstaculo_a_cadena(void *elemento)
-{
-	enum TP_OBSTACULO *obstaculo = (enum TP_OBSTACULO *)elemento;
-	switch (*obstaculo) {
-	case OBSTACULO_FUERZA:
-		return SIMBOLO_OBSTACULO_FUERZA;
-	case OBSTACULO_DESTREZA:
-		return SIMBOLO_OBSTACULO_DESTREZA;
-	case OBSTACULO_INTELIGENCIA:
-		return SIMBOLO_OBSTACULO_INTELIGENCIA;
-	default:
-		return NULL;
-	}
 }
 
 TP *tp_crear(const char *nombre_archivo)
@@ -255,6 +275,21 @@ TP *tp_crear(const char *nombre_archivo)
 
 	fclose(archivo);
 	return tp;
+}
+
+const char *conversor_obstaculo_a_cadena(void *elemento)
+{
+	enum TP_OBSTACULO *obstaculo = (enum TP_OBSTACULO *)elemento;
+	switch (*obstaculo) {
+	case OBSTACULO_FUERZA:
+		return SIMBOLO_OBSTACULO_FUERZA;
+	case OBSTACULO_DESTREZA:
+		return SIMBOLO_OBSTACULO_DESTREZA;
+	case OBSTACULO_INTELIGENCIA:
+		return SIMBOLO_OBSTACULO_INTELIGENCIA;
+	default:
+		return NULL;
+	}
 }
 
 int tp_cantidad_pokemon(TP *tp)
@@ -320,7 +355,7 @@ bool llenar_cadena_letras(void *elemento, void *contexto)
 	}
 
 	if (strlen(nueva_cadena) != 0) {
-		strncat(nueva_cadena, &cadena->separador, 1);
+		strcat(nueva_cadena, &cadena->separador);
 	}
 	strcat(nueva_cadena, elemento_str);
 
@@ -480,7 +515,7 @@ char *tp_obstaculos_pista(TP *tp, enum TP_JUGADOR jugador)
 		return NULL;
 	}
 
-	configurar_cadena(&cadena, tp, SEPARADOR_COMA, true);
+	configurar_cadena(&cadena, tp, CARACTER_NULO, true);
 
 	if (lista_con_cada_elemento(pista_actual, llenar_cadena_letras,
 				    &cadena) == 0) {
