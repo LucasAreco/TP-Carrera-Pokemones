@@ -27,6 +27,6 @@
  * split(NULL, ';') => NULL
  *
  */
-char** split(const char* string, char separador);
+char **split(const char *string, char separador);
 
 #endif // SPLIT_H_
