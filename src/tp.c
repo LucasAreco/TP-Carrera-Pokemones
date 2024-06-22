@@ -537,7 +537,10 @@ char *agregar_numero_a_cadena(char *cadena, int numero)
 	char numero_str[12];
 	snprintf(numero_str, sizeof(numero_str), "%d", numero);
 
-	size_t nuevo_tamanio = strlen(cadena) + strlen(numero_str) + 2;
+	size_t tamanio_cadena = (cadena == NULL) ? 0 : strlen(cadena);
+	size_t tamanio_numero = strlen(numero_str);
+
+	size_t nuevo_tamanio = tamanio_cadena + tamanio_numero + 2;
 
 	char *nueva_cadena = realloc(cadena, nuevo_tamanio);
 	if (!nueva_cadena) {
@@ -545,8 +548,8 @@ char *agregar_numero_a_cadena(char *cadena, int numero)
 		return NULL;
 	}
 
-	if (strlen(nueva_cadena) != 0) {
-		strncat(nueva_cadena, ",", 1);
+	if (tamanio_cadena != 0) {
+		strcat(nueva_cadena, ",");
 	}
 
 	strcat(nueva_cadena, numero_str);
