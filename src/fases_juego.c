@@ -4,6 +4,27 @@
 #include <stdlib.h>
 #include "split.h"
 
+
+fase_t* inicio_juego() {
+	fase_t* fase_inicio = inicializar_fase();
+	if (!fase_inicio) {
+		return NULL;
+	}
+
+	menu_t* menu_inicio = fase_inicio->menu;
+	
+	menu_agregar_comando(menu_inicio, "Q", "Salir del juego.", salir);
+	menu_agregar_comando(menu_inicio, "C", "Continuar el juego", pasar_a_seleccionar_dificultad);
+	menu_agregar_comando(menu_inicio, "H", "Se imprime ayuda del menu.", mostrar_comando_y_descripcion);
+	menu_agregar_comando(menu_inicio, "?", "Acerca del juego", mostrar_acerca_del_juego);
+
+
+	fase_inicio->contenido = mostrar_interfaz_inicio;
+
+	return fase_inicio;
+}
+
+
 fase_t *seleccionar_dificultad()
 {
 	fase_t *fase_dificultad = inicializar_fase();

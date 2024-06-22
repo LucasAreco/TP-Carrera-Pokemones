@@ -105,10 +105,10 @@ bool volver_a_menu_armado_pista(char *linea, estado_t *estado,
 {
 	if (strcmp(linea, "b") == 0) {
 		printf("Volviendo al menú de armado de pista.\n");
-		free(pista_usuario); // Liberar memoria de pista_usuario
+		free(pista_usuario); 
 		return volver(estado);
 	}
-	return false; // El comando no fue "b"
+	return false; 
 }
 
 bool datos_de_modificacion_pista_validos(char **datos_modificacion,
@@ -146,15 +146,15 @@ bool ejecutar_tipo_de_ejecucion(char **datos_modificacion, char **pista_usuario,
 	if (strcmp(tipo_modificacion, "+") == 0) {
 		tp_agregar_obstaculo(estado->juego, JUGADOR_1, tipo_obstaculo,
 				     (unsigned)posicion);
-		free(*pista_usuario); // Liberar memoria antigua
+		free(*pista_usuario); 
 		*pista_usuario =
-			NULL; // Reiniciar pista_usuario para obtener nueva pista
+			NULL; 
 	} else if (strcmp(tipo_modificacion, "-") == 0) {
 		tp_quitar_obstaculo(estado->juego, JUGADOR_1,
 				    (unsigned)posicion);
-		free(*pista_usuario); // Liberar memoria antigua
+		free(*pista_usuario); 
 		*pista_usuario =
-			NULL; // Reiniciar pista_usuario para obtener nueva pista
+			NULL; 
 	} else {
 		printf("Comando inválido. Formato esperado: + TIPO_OBSTACULO POSICION (ej. + F 3)\n");
 	}
@@ -204,6 +204,16 @@ int intentos_totales(int dificultad)
 		return -1;
 		break;
 	}
+}
+
+
+bool pasar_a_seleccionar_dificultad(void* e) {
+	estado_t *estado = (estado_t *)e;
+	destruir_fase(estado->fase_actual);
+	estado->fase_actual = seleccionar_dificultad(estado);
+	estado->fase_actual->contenido(estado);
+	estado->continuar = true;
+	return true;
 }
 
 bool inicializar_dificultad(void *e)
@@ -328,7 +338,9 @@ bool modificar_pista(void *e)
 				return true;
 			}
 
-			if (strlen(linea) == 5) {
+			size_t longitud_linea = strlen(linea);
+
+			if (longitud_linea == 5 || longitud_linea == 6) {
 				if (!agregar_o_quitar_obstaculo(
 					    linea, estado, &pista_usuario)) {
 					free(pista_usuario);

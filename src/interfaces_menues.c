@@ -17,12 +17,6 @@ void limpiar_pantalla_completa()
 	printf("\033[2J\033[H");
 }
 
-// void limpiar_pantalla_parcial(int numero_lineas) {
-//     for (int i = 0; i < numero_lineas; i++) {
-//         printf("\033[A");
-//         printf("\033[2K");
-//     }
-// }
 
 bool imprimir_comando_descripcion(const char *clave, const char *descripcion,
 				  bool (*funcion)(void *), void *aux)
@@ -37,6 +31,33 @@ bool mostrar_comando_y_descripcion(void *contexto)
 	menu_con_cada_comando(estado->fase_actual->menu,
 			      imprimir_comando_descripcion, NULL);
 	return true;
+}
+
+
+void mostrar_interfaz_inicio(void *contexto) {
+	limpiar_pantalla_completa();
+    printf("\n\n\n\n"
+    "\t  /$$$$$$                                                                      /$$                 /$$$$$$$          /$$                                                                      \n"
+    "\t  /$$__  $$                                                                    | $$                | $$__  $$        | $$                                                                      \n"
+    "\t | $$  \\__/ /$$$$$$   /$$$$$$  /$$$$$$  /$$$$$$   /$$$$$$  /$$$$$$         /$$$$$$$  /$$$$$$       | $$  \\ $$/$$$$$$ | $$   /$$  /$$$$$$  /$$$$$$/$$$$   /$$$$$$  /$$$$$$$   /$$$$$$  /$$$$$$$\n"
+    "\t | $$      |____  $$ /$$__  $$/$$__  $$/$$__  $$ /$$__  $$|____  $$       /$$__  $$ /$$__  $$      | $$$$$$$/$$__  $$| $$  /$$/ /$$__  $$| $$_  $$_  $$ /$$__  $$| $$__  $$ /$$__  $$ /$$_____/ \n"
+    "\t | $$       /$$$$$$$| $$  \\__/ $$  \\__/ $$$$$$$$| $$  \\__/ /$$$$$$$      | $$  | $$| $$$$$$$$      | $$____/ $$  \\ $$| $$$$$$/ | $$$$$$$$| $$ \\ $$ \\ $$| $$  \\ $$| $$  \\ $$| $$$$$$$$|  $$$$$$  \n"
+    "\t | $$    $$/$$__  $$| $$     | $$     | $$_____/| $$      /$$__  $$      | $$  | $$| $$_____/      | $$    | $$  | $$| $$_  $$ | $$_____/| $$ | $$ | $$| $$  | $$| $$  | $$| $$_____/ \\____  $$ \n"
+    "\t |  $$$$$$/  $$$$$$$| $$     | $$     |  $$$$$$$| $$     |  $$$$$$$      |  $$$$$$$|  $$$$$$$      | $$    |  $$$$$$/| $$ \\  $$|  $$$$$$$| $$ | $$ | $$|  $$$$$$/| $$  | $$|  $$$$$$$ /$$$$$$$/ \n"
+    "\t \\______/ \\_______/|__/     |__/      \\_______/|__/      \\_______/       \\_______/ \\_______/      |__/     \\______/ |__/  \\__/ \\_______/|__/ |__/ |__/ \\______/ |__/  |__/ \\_______/|_______/  \n"
+    "                                                                                                                                                                                               \n"
+    "                                                                                                                                                                                               \n"
+    );
+	printf("\n\n\t\t\t\t\t\t\tIngresa 'c' para continuar o '?' para saber acerca del juego.\t Para ver opciones disponibles ingresa 'h'.\n\n\n");
+}
+
+bool mostrar_acerca_del_juego(void *contexto) {
+	printf("En este juego, tú eliges la dificultad y tu pokémon favorito para competir contra otro seleccionado al azar.\n");
+	printf("Deberás construir una pista de obstáculos, calculando el tiempo según los atributos de tu pokémon y el tipo de obstaculos.\n");
+	printf("El objetivo es que ambos pokémones terminen la carrera lo más sincronizados posible para conseguir el mejor puntaje final.\n");
+
+
+ 	return true;
 }
 
 void mostrar_info_pokemon(const struct pokemon_info *pokemon)
@@ -90,36 +111,27 @@ int cantidad_ocultos_segun_dificultad(int dificultad,
 	return cantidad_ocultos;
 }
 
-void mostar_obstaculos_oponente(TP *tp, enum TP_JUGADOR jugador, int dificultad,
-				unsigned int cantidad_obstaculos)
+void mostrar_obstaculos_oponente(TP *tp, enum TP_JUGADOR jugador, int dificultad,
+                                 unsigned int cantidad_obstaculos)
 {
-	char separador = ',';
-	char *obstaculos_jugador = tp_obstaculos_pista(tp, jugador);
-	if (!obstaculos_jugador) {
-		printf("No hay obstáculos disponibles.\n");
-		return;
-	}
+    char *obstaculos_jugador = tp_obstaculos_pista(tp, jugador);
+    if (!obstaculos_jugador) {
+        printf("No hay obstáculos disponibles.\n");
+        return;
+    }
 
-	char **pista = split(obstaculos_jugador, separador);
-	if (!pista) {
-		printf("Error al dividir los obstáculos.\n");
-		free(obstaculos_jugador);
-		return;
-	}
+    int cantidad_ocultos = cantidad_ocultos_segun_dificultad(dificultad, cantidad_obstaculos);
 
-	int cantidad_ocultos = cantidad_ocultos_segun_dificultad(
-		dificultad, cantidad_obstaculos);
-	for (int i = 1; i < cantidad_obstaculos; i++) {
-		if (i > cantidad_ocultos) {
-			printf("%-3s ", pista[i]);
-		} else {
-			printf("%-3s ", "???");
-		}
-	}
-	printf("\n");
+    for (unsigned int i = 0; i < cantidad_obstaculos; i++) {
+        if (i < cantidad_ocultos) {
+            printf("??? ");
+        } else {
+            printf("%c\t", obstaculos_jugador[i]);
+        }
+    }
+    printf("\n");
 
-	liberar_memoria_split(pista, (int)cantidad_obstaculos);
-	free(obstaculos_jugador);
+    free(obstaculos_jugador);
 }
 
 void mostrar_interfaz_info_oponente(void *contexto)
@@ -139,7 +151,7 @@ void mostrar_interfaz_info_oponente(void *contexto)
 
 	mostrar_info_pokemon(pokemon_oponente);
 
-	mostar_obstaculos_oponente(estado->juego, JUGADOR_2, estado->dificultad,
+	mostrar_obstaculos_oponente(estado->juego, JUGADOR_2, estado->dificultad,
 				   cantidad_oponentes);
 }
 
@@ -210,23 +222,29 @@ char *mostrar_pista_usuario(char *pista_usuario, estado_t *estado)
 
 void mostrar_resultado_carrera(void *contexto)
 {
-	estado_t *estado = (estado_t *)contexto;
-	unsigned tiempo_usuario =
-		tp_calcular_tiempo_pista(estado->juego, JUGADOR_1);
-	unsigned tiempo_oponente =
-		tp_calcular_tiempo_pista(estado->juego, JUGADOR_2);
-	limpiar_pantalla_completa();
-	printf("Tiempo usuario: %u", tiempo_usuario);
-	printf("Tiempo oponente: %u", tiempo_oponente);
+    estado_t *estado = (estado_t *)contexto;
+    unsigned tiempo_usuario = tp_calcular_tiempo_pista(estado->juego, JUGADOR_1);
+    unsigned tiempo_oponente = tp_calcular_tiempo_pista(estado->juego, JUGADOR_2);
+    limpiar_pantalla_completa();
 
-	if (tiempo_usuario - tiempo_oponente == 0) {
-		printf("Felicitaciones, los pokemones igualaron sus tiempos.");
-	} else {
-		printf("Los pokemones no acercaron sus tiempos. Si quieres modificar tu pista y volver a correr oprime 'a'. Tienes %i intentos.",
-		       estado->intentos);
-	}
+    int tiempo_usuario_signed = (int)tiempo_usuario;
+    int tiempo_oponente_signed = (int)tiempo_oponente;
+    int diferencia_tiempos = abs(tiempo_usuario_signed - tiempo_oponente_signed);
+    int suma_tiempos = tiempo_usuario_signed + tiempo_oponente_signed;
+
+    unsigned puntaje_final = 100 - (unsigned)((100 * diferencia_tiempos) / suma_tiempos);
+
+    printf("Puntaje final: %u\n", puntaje_final);
+
+    if (puntaje_final >= 98) {
+        printf("Felicitaciones, los pokemones acercaron sus tiempos.");
+    } else if (puntaje_final == 100) {
+        printf("Felicitaciones, los pokemones igualaron sus tiempos.");
+    } else {
+        printf("Los pokemones no acercaron sus tiempos. Si quieres modificar tu pista y volver a correr oprime 'a'. Tienes %i intentos.",
+               estado->intentos);
+    }
 }
-
 void mostrar_interfaz_fin_del_juego(void *contexto)
 {
 	estado_t *estado = (estado_t *)contexto;

@@ -56,7 +56,6 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 
-	printf("Bienvenido, ingrese comando a continuación o escriba ayuda\n\n");
 
 	srand((unsigned int)time(NULL));
 
@@ -65,7 +64,7 @@ int main(int argc, char const *argv[])
 		.continuar = true,
 		.entrada = NULL,
 		.dificultad = -1,
-		.fase_actual = seleccionar_dificultad(),
+		.fase_actual = inicio_juego(),
 		.intentos = 0,
 	};
 

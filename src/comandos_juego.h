@@ -23,6 +23,7 @@ bool volver_a_modificar_pista(void *e);
 
 bool salir(void *e);
 
+bool pasar_a_seleccionar_dificultad(void* e);
 bool pasar_a_seleccionar_pokemon(void *e);
 bool pasar_a_armar_pista(void *e);
 bool pasar_a_correr_carrera(void *e);
