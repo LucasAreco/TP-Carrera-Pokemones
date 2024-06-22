@@ -2,11 +2,17 @@
 #include "split.h"
 #include "interfaces_menues.h"
 #include "fases_juego.h"
+#include "tp.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+
+#define AGREGAR_OBSTACULO "+"
+#define QUITAR_OBSTACULO "-"
+#define SEPARADOR ','
+
 
 int seleccionar_numero_aleatorio(int max)
 {
@@ -38,7 +44,7 @@ const struct pokemon_info *obtener_pokemon_aleatorio(TP *tp)
 		return NULL;
 	}
 
-	char separador = ',';
+	char separador = SEPARADOR;
 	char **nombres_disponibles = split(pokemones_disponibles, separador);
 
 	int cantidad_pokemones = tp_cantidad_pokemon(tp);
@@ -76,13 +82,13 @@ const struct pokemon_info *asignar_pokemon_jugador(TP *tp,
 enum TP_OBSTACULO conversor_obstaculo_numero(char letra_obstaculo)
 {
 	switch (letra_obstaculo) {
-	case 'F':
+	case IDENTIFICADOR_OBSTACULO_FUERZA:
 		return OBSTACULO_FUERZA;
 		break;
-	case 'D':
+	case IDENTIFICADOR_OBSTACULO_DESTREZA:
 		return OBSTACULO_DESTREZA;
 		break;
-	case 'I':
+	case IDENTIFICADOR_OBSTACULO_INTELIGENCIA:
 		return OBSTACULO_INTELIGENCIA;
 		break;
 
@@ -121,8 +127,8 @@ bool datos_de_modificacion_pista_validos(char **datos_modificacion,
 	}
 
 	if (hay_tipo_modificacion) {
-		if ((strcmp(datos_modificacion[0], "+") == 0 ||
-		     strcmp(datos_modificacion[0], "-") == 0) &&
+		if ((strcmp(datos_modificacion[0], AGREGAR_OBSTACULO) == 0 ||
+		     strcmp(datos_modificacion[0], QUITAR_OBSTACULO) == 0) &&
 		    conversor_obstaculo_numero(datos_modificacion[1][0]) !=
 			    -1 &&
 		    atoi(datos_modificacion[2]) >= 0) {
@@ -135,7 +141,7 @@ bool datos_de_modificacion_pista_validos(char **datos_modificacion,
 	return son_validos;
 }
 
-bool ejecutar_tipo_de_ejecucion(char **datos_modificacion, char **pista_usuario,
+bool ejecutar_tipo_de_modificacion(char **datos_modificacion, char **pista_usuario,
 				estado_t *estado)
 {
 	char *tipo_modificacion = datos_modificacion[0];
@@ -143,20 +149,20 @@ bool ejecutar_tipo_de_ejecucion(char **datos_modificacion, char **pista_usuario,
 		conversor_obstaculo_numero(datos_modificacion[1][0]);
 	int posicion = atoi(datos_modificacion[2]);
 
-	if (strcmp(tipo_modificacion, "+") == 0) {
+	if (strcmp(tipo_modificacion, AGREGAR_OBSTACULO) == 0) {
 		tp_agregar_obstaculo(estado->juego, JUGADOR_1, tipo_obstaculo,
 				     (unsigned)posicion);
 		free(*pista_usuario); 
 		*pista_usuario =
 			NULL; 
-	} else if (strcmp(tipo_modificacion, "-") == 0) {
+	} else if (strcmp(tipo_modificacion, QUITAR_OBSTACULO) == 0) {
 		tp_quitar_obstaculo(estado->juego, JUGADOR_1,
 				    (unsigned)posicion);
 		free(*pista_usuario); 
 		*pista_usuario =
 			NULL; 
 	} else {
-		printf("Comando inválido. Formato esperado: + TIPO_OBSTACULO POSICION (ej. + F 3)\n");
+		printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 	}
 
 	return true;
@@ -173,12 +179,10 @@ bool agregar_o_quitar_obstaculo(char *linea, estado_t *estado,
 	}
 
 	if (datos_de_modificacion_pista_validos(datos_modificacion, true)) {
-		ejecutar_tipo_de_ejecucion(datos_modificacion, pista_usuario,
+		ejecutar_tipo_de_modificacion(datos_modificacion, pista_usuario,
 					   estado);
 	} else {
-		printf("Comando inválido. Formato esperado: + TIPO_OBSTACULO POSICION (ej. + F 3)\n");
-		liberar_memoria_split(datos_modificacion, 3);
-		return false;
+		printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 	}
 
 	liberar_memoria_split(datos_modificacion, 3);
@@ -259,7 +263,7 @@ bool seleccion_pokemon_usuario(void *e)
 		const struct pokemon_info *pokemon_usuario =
 			tp_pokemon_seleccionado(estado->juego, JUGADOR_1);
 		mostrar_info_pokemon(pokemon_usuario);
-		printf("\nSi el pokemon seleccionado es correcto, oprime 'c', para continuar o ingresa otro nombre:\n");
+		printf("\nSi el pokemon seleccionado es correcto, oprime 'c' para continuar o ingresa otro nombre:\n");
 		return true;
 	} else {
 		printf("El nombre del pokemon ya ha sido seleccionado.");
@@ -325,9 +329,15 @@ bool modificar_pista(void *e)
 {
 	estado_t *estado = (estado_t *)e;
 	char *pista_usuario = NULL;
+	printf("\n\t - MODO MODIFACION PISTA ACTIVADO - \n");
 
 	while (true) {
 		pista_usuario = mostrar_pista_usuario(pista_usuario, estado);
+		if (!pista_usuario) {
+			printf("\nLa pista no tiene obstaculo. Agrega o quita algun obstáculo con +/- TIPO_OBSTACULO POSICION (ej. +/- D 0).\n");
+		} else {
+			printf("\n\nSi ya no quieres modificar la pista, regresa ingresando 'b'.\n\n");
+		}
 
 		printf("\n> ");
 		char linea[200];
@@ -346,8 +356,8 @@ bool modificar_pista(void *e)
 					free(pista_usuario);
 					return false;
 				}
-			} else {
-				printf("Comando inválido. Formato esperado: + TIPO_OBSTACULO POSICION (ej. + F 3)\n");
+			} else {	
+				printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 			}
 		}
 	}

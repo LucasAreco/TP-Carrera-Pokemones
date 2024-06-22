@@ -48,6 +48,7 @@ void ejecutar_juego(estado_t *estado)
 	}
 }
 
+
 int main(int argc, char const *argv[])
 {
 	TP *tp = tp_crear(argv[1]);
