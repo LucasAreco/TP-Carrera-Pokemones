@@ -12,7 +12,6 @@ fase_t *inicializar_fase()
 		free(nueva_fase);
 		return NULL;
 	}
-	nueva_fase->valida = true;
 	return nueva_fase;
 }
 

@@ -1,8 +1,9 @@
-#include "comandos_juego.h"
+#include "funciones_juego.h"
 #include "split.h"
 #include "interfaces_menues.h"
 #include "fases_juego.h"
 #include "tp.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,14 @@
 #define QUITAR_OBSTACULO "-"
 #define SEPARADOR ','
 
+
+void liberar_memoria_split(char **nombres)
+{
+	for (int i = 0; nombres[i] != NULL; i++) {
+		free(nombres[i]);
+	}
+	free(nombres);
+}
 
 int seleccionar_numero_aleatorio(int max)
 {
@@ -57,7 +66,7 @@ const struct pokemon_info *obtener_pokemon_aleatorio(TP *tp)
 	const struct pokemon_info *pokemon_oponente =
 		tp_buscar_pokemon(tp, nombre_random);
 
-	liberar_memoria_split(nombres_disponibles, cantidad_pokemones);
+	liberar_memoria_split(nombres_disponibles);
 	free(pokemones_disponibles);
 
 	return pokemon_oponente;
@@ -185,7 +194,7 @@ bool agregar_o_quitar_obstaculo(char *linea, estado_t *estado,
 		printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 	}
 
-	liberar_memoria_split(datos_modificacion, 3);
+	liberar_memoria_split(datos_modificacion);
 	return true;
 }
 

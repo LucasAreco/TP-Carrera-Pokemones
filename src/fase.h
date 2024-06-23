@@ -6,13 +6,19 @@
 
 typedef struct fase {
 	menu_t *menu;
-	bool valida;
 	char *entrada;
 	void (*contenido)(void *);
 } fase_t;
 
-// Funciones públicas
+
+/**
+ * Crea una nueva fase.
+ * Devuelve un puntero a la fase creada o NULL en caso de error.
+ */
 fase_t *inicializar_fase();
 
+/**
+ * Libera toda la memoria reservada por la fase.
+ */
 void destruir_fase(fase_t *fase);
 #endif // FASE_H

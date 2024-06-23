@@ -51,7 +51,7 @@ void convertir_primera_mayuscula(char *cadena)
 
 	*cadena = (char)toupper((unsigned char)*cadena);
 
-	for (char *c = cadena + 1; *c != CARACTER_NULO; ++c) {
+	for (char *c = cadena + 1; *c != CARACTER_NULO; c++) {
 		*c = (char)tolower((unsigned char)*c);
 	}
 }
@@ -154,7 +154,7 @@ bool archivo_es_txt(const char *nombre)
 bool verificar_conversion_entero(const char *cadena, int *resultado)
 {
 	*resultado = atoi(cadena);
-	if (*resultado == 0 && cadena[0] != '0') {
+	if (*resultado == 0 && cadena[0] != CARACTER_NULO) {
 		return false;
 	}
 

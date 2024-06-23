@@ -1,5 +1,5 @@
 #include "fase.h"
-#include "comandos_juego.h"
+#include "funciones_juego.h"
 #include "interfaces_menues.h"
 #include <stdlib.h>
 #include "split.h"
@@ -98,8 +98,7 @@ fase_t *inicializar_pokemon_usuario(estado_t *estado)
 
 	fase_usuario->contenido = mostrar_info_pokemon_usuario;
 
-	liberar_memoria_split(pokemones_disponibles,
-			      tp_cantidad_pokemon(estado->juego));
+	liberar_memoria_split(pokemones_disponibles);
 	free(nombres_pokemon);
 
 	return fase_usuario;

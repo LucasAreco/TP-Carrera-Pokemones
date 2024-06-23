@@ -1,6 +1,5 @@
 #include "tp.h"
 #include "fase.h"
-#include "comandos_juego.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +7,7 @@
 #include <time.h>
 #include <ctype.h>
 #include "split.h"
-#include "comandos_juego.h"
+#include "funciones_juego.h"
 
 #include "interfaces_menues.h"
 
@@ -80,13 +79,7 @@ void mostrar_interfaz_dificultad(void *contexto)
 	printf("Ingresa el número de la dificultad deseada o ingresa 'h' para ayuda.\n\n");
 }
 
-void liberar_memoria_split(char **nombres, int cantidad)
-{
-	for (int i = 0; i < cantidad; i++) {
-		free(nombres[i]);
-	}
-	free(nombres);
-}
+
 
 int cantidad_ocultos_segun_dificultad(int dificultad,
 				      unsigned int cantidad_obstaculos)
@@ -186,7 +179,7 @@ void mostrar_pokemones_disponibles(TP *tp)
 		printf("-> %s \n", pokemones_disponibles[i]);
 	}
 
-	liberar_memoria_split(pokemones_disponibles, cantidad_pokemones);
+	liberar_memoria_split(pokemones_disponibles);
 	free(nombres_pokemon);
 }
 
