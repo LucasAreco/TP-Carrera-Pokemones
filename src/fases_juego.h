@@ -10,7 +10,7 @@
  * Crea y devuelve la fase inicial del juego.
  * En caso de error devuelve NULL.
  */
-fase_t* inicio_juego();
+fase_t *inicio_juego();
 
 /**
  * Crea y devuelve la fase de selección de dificultad del juego.
@@ -47,6 +47,5 @@ fase_t *correr_carrera();
  * En caso de error devuelve NULL.
  */
 fase_t *fin_del_juego();
-
 
 #endif // FASES_JUEGO_H

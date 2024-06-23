@@ -8,7 +8,7 @@
  * Muestra la interfaz de inicio del juego, incluyendo el logo y las opciones iniciales.
  * En caso de error, no realiza ninguna acción visible.
  */
-void mostrar_interfaz_inicio(void* contexto);
+void mostrar_interfaz_inicio(void *contexto);
 
 /**
  * Muestra la interfaz de selección de dificultad del juego.
@@ -65,7 +65,7 @@ void mostrar_interfaz_fin_del_juego(void *contexto);
  * Siempre retorna true.
  */
 bool imprimir_comando_descripcion(const char *clave, const char *descripcion,
-                                  bool (*funcion)(void *), void *aux);
+				  bool (*funcion)(void *), void *aux);
 
 /**
  * Muestra todos los comandos disponibles en la interfaz actual.
@@ -80,7 +80,5 @@ bool mostrar_comando_y_descripcion(void *contexto);
  * Siempre retorna true.
  */
 bool mostrar_acerca_del_juego(void *contexto);
-
-
 
 #endif // INTERFACES_MENUES_H

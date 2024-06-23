@@ -19,15 +19,15 @@
  */
 void normalizar_entrada(char *cadena)
 {
-    if (!cadena || *cadena == CARACTER_NULO) {
-        return;
-    }
+	if (!cadena || *cadena == CARACTER_NULO) {
+		return;
+	}
 
-    *cadena = (char)toupper((unsigned char)*cadena);
+	*cadena = (char)toupper((unsigned char)*cadena);
 
-    for (char *c = cadena + 1; *c != CARACTER_NULO; c++) {
-        *c = (char)tolower((unsigned char)*c);
-    }
+	for (char *c = cadena + 1; *c != CARACTER_NULO; c++) {
+		*c = (char)tolower((unsigned char)*c);
+	}
 }
 
 /**
@@ -37,12 +37,12 @@ void normalizar_entrada(char *cadena)
  */
 void tomar_linea(char *linea, int tamanio)
 {
-    if (fgets(linea, tamanio, stdin)) {
-        int longitud = (int)strlen(linea);
-        if (longitud > 0 && linea[longitud - 1] == '\n') {
-            linea[longitud - 1] = CARACTER_NULO;
-        }
-    }
+	if (fgets(linea, tamanio, stdin)) {
+		int longitud = (int)strlen(linea);
+		if (longitud > 0 && linea[longitud - 1] == '\n') {
+			linea[longitud - 1] = CARACTER_NULO;
+		}
+	}
 }
 
 /**
@@ -53,22 +53,21 @@ void tomar_linea(char *linea, int tamanio)
  */
 void ejecutar_juego(estado_t *estado)
 {
-    while (estado->continuar) {
-        printf("\n> ");
-        char linea[LONGITUD_LINEA];
-        tomar_linea(linea, sizeof(linea));
-        normalizar_entrada(linea);
-        estado->fase_actual->entrada = linea;
-        MENU_RESULTADO resultado = menu_ejecutar_comando(
-            estado->fase_actual->menu, linea, estado);
-        if (resultado == COMANDO_INEXISTENTE) {
-            printf("El comando ingresado no existe. Intenta de nuevo.\n");
-        } else if (resultado == MENU_ERROR) {
-            printf("UPS... hay problemas con el juego.\n");
-        }
-    }
+	while (estado->continuar) {
+		printf("\n> ");
+		char linea[LONGITUD_LINEA];
+		tomar_linea(linea, sizeof(linea));
+		normalizar_entrada(linea);
+		estado->fase_actual->entrada = linea;
+		MENU_RESULTADO resultado = menu_ejecutar_comando(
+			estado->fase_actual->menu, linea, estado);
+		if (resultado == COMANDO_INEXISTENTE) {
+			printf("El comando ingresado no existe. Intenta de nuevo.\n");
+		} else if (resultado == MENU_ERROR) {
+			printf("UPS... hay problemas con el juego.\n");
+		}
+	}
 }
-
 
 int main(int argc, char const *argv[])
 {
@@ -77,7 +76,6 @@ int main(int argc, char const *argv[])
 		printf("No pasaste un archivo válido en formato txt.");
 		return 0;
 	}
-
 
 	srand((unsigned int)time(NULL));
 

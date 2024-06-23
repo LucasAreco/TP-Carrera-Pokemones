@@ -46,7 +46,7 @@ bool volver_a_modificar_pista(void *e);
 /**
  * Avanza a la fase de selección de dificultad del juego.
  */
-bool pasar_a_seleccionar_dificultad(void* e);
+bool pasar_a_seleccionar_dificultad(void *e);
 
 /**
  * Avanza a la fase de selección de Pokémon por parte del usuario.
@@ -72,13 +72,15 @@ bool pasar_a_fin_juego(void *e);
  * Asigna un Pokémon al jugador basado en la elección realizada.
  * Esta función es utilizada internamente para asignar el Pokémon al jugador después de la selección.
  */
-const struct pokemon_info *asignar_pokemon_jugador(TP *tp, enum TP_JUGADOR jugador);
+const struct pokemon_info *asignar_pokemon_jugador(TP *tp,
+						   enum TP_JUGADOR jugador);
 
 /**
  * Construye la pista del oponente del jugador según la dificultad elegida.
  * Devuelve la cantidad de obstáculos construidos para la pista del oponente.
  */
-unsigned int construir_pista_oponente(TP *tp, enum TP_JUGADOR jugador, int dificultad);
+unsigned int construir_pista_oponente(TP *tp, enum TP_JUGADOR jugador,
+				      int dificultad);
 
 /**
  * Termina el juego y libera los recursos utilizados.
@@ -91,6 +93,4 @@ bool salir(void *e);
  */
 void liberar_memoria_split(char **nombres);
 
-
 #endif // FUNCIONES_JUEGO_H
-

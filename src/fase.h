@@ -10,7 +10,6 @@ typedef struct fase {
 	void (*contenido)(void *);
 } fase_t;
 
-
 /**
  * Crea una nueva fase.
  * Devuelve un puntero a la fase creada o NULL en caso de error.

@@ -172,7 +172,6 @@ void cuando_se_solicita_pokemones_disponibles_se_devuelve_un_string_con_los_poke
 	pa2m_afirmar(cantidad_pokemones == tp_cantidad_pokemon(tp),
 		     "La cantidad de pokemones disponibles es correcta.");
 
-
 	free(pokemones_disponibles);
 
 	tp_destruir(tp);
@@ -182,9 +181,10 @@ void cuando_se_solicita_pokemones_disponibles_no_se_muestran_los_pokemones_ya_se
 {
 	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-	pa2m_afirmar(tp_seleccionar_pokemon(tp, JUGADOR_1, "pikachu"), "Se selecciona un pokemon correctamente para jugador 1.");
-	pa2m_afirmar(tp_seleccionar_pokemon(tp, JUGADOR_2, "charizard"), "Se selecciona un pokemon correctamente para jugador 2.");
-
+	pa2m_afirmar(tp_seleccionar_pokemon(tp, JUGADOR_1, "pikachu"),
+		     "Se selecciona un pokemon correctamente para jugador 1.");
+	pa2m_afirmar(tp_seleccionar_pokemon(tp, JUGADOR_2, "charizard"),
+		     "Se selecciona un pokemon correctamente para jugador 2.");
 
 	char *pokemones_disponibles = tp_nombres_disponibles(tp);
 
@@ -201,7 +201,6 @@ void cuando_se_solicita_pokemones_disponibles_no_se_muestran_los_pokemones_ya_se
 
 	pa2m_afirmar(cantidad_pokemones == tp_cantidad_pokemon(tp) - 2,
 		     "La cantidad de pokemones disponibles es correcta.");
-
 
 	free(pokemones_disponibles);
 
@@ -394,165 +393,177 @@ void cuando_se_agrega_un_obstaculo_en_una_posición_fuera_del_rango_se_espera_qu
 
 void cuando_se_quita_un_obstaculo_de_una_pista_se_espera_la_cantidad_actual_total_de_obstaculos()
 {
-    TP *tp = tp_crear(ARCHIVO_PRUEBA);
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 0) == 1,
-        "Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 2) == 2,
-        "Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 1) == 3,
-        "Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_FUERZA, 0) == 1,
+		"Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 2) == 2,
+		"Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA,
+				     1) == 3,
+		"Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
 
-    pa2m_afirmar(
-        tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 2,
-        "Se quita correctamente el obstáculo en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 1,
-        "Se quita correctamente el obstáculo en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_quitar_obstaculo(tp, JUGADOR_2, 0) == 0,
-        "Se quita correctamente el último obstáculo de la pista y la pista está vacía.");
+	pa2m_afirmar(
+		tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 2,
+		"Se quita correctamente el obstáculo en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_quitar_obstaculo(tp, JUGADOR_2, 1) == 1,
+		"Se quita correctamente el obstáculo en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_quitar_obstaculo(tp, JUGADOR_2, 0) == 0,
+		"Se quita correctamente el último obstáculo de la pista y la pista está vacía.");
 
-    tp_destruir(tp);
+	tp_destruir(tp);
 }
 
 void cuando_se_solicitan_los_obstaculos_de_una_pista_se_espera_un_string_con_los_obstaculos()
 {
-    TP *tp = tp_crear(ARCHIVO_PRUEBA);
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
-        "Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2) == 2,
-        "Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 3,
-        "Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 10) == 4,
-        "Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 10 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 5,
-        "Se agrega correctamente el quinto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
+		"Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2) == 2,
+		"Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     1) == 3,
+		"Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     10) == 4,
+		"Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 10 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     1) == 5,
+		"Se agrega correctamente el quinto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
 
-    char *obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
+	char *obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
 
-    pa2m_afirmar(obstaculos_pista != NULL,
-                 "Se obtienen correctamente los obstáculos de la pista.");
-    if (obstaculos_pista) {
-        printf("Obstáculos en la pista: %s\n", obstaculos_pista);
-    }
+	pa2m_afirmar(obstaculos_pista != NULL,
+		     "Se obtienen correctamente los obstáculos de la pista.");
+	if (obstaculos_pista) {
+		printf("Obstáculos en la pista: %s\n", obstaculos_pista);
+	}
 
-    free(obstaculos_pista);
+	free(obstaculos_pista);
 
-    tp_destruir(tp);
+	tp_destruir(tp);
 }
 
 void cuando_se_limpia_la_pista_se_espera_que_la_pista_no_tenga_obstaculos()
 {
-    TP *tp = tp_crear(ARCHIVO_PRUEBA);
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
-        "Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2) == 2,
-        "Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 3,
-        "Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 10) == 4,
-        "Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 10 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 5,
-        "Se agrega correctamente el quinto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
+		"Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 2) == 2,
+		"Se agrega correctamente el segundo obstáculo de destreza en la posición 2 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     1) == 3,
+		"Se agrega correctamente el tercer obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     10) == 4,
+		"Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 10 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     1) == 5,
+		"Se agrega correctamente el quinto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
 
-    tp_limpiar_pista(tp, JUGADOR_1);
+	tp_limpiar_pista(tp, JUGADOR_1);
 
-    char *obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
+	char *obstaculos_pista = tp_obstaculos_pista(tp, JUGADOR_1);
 
-    pa2m_afirmar(obstaculos_pista == NULL,
-                 "Se eliminan los obstáculos correctamente.");
+	pa2m_afirmar(obstaculos_pista == NULL,
+		     "Se eliminan los obstáculos correctamente.");
 
-    free(obstaculos_pista);
+	free(obstaculos_pista);
 
-    tp_destruir(tp);
+	tp_destruir(tp);
 }
 
 void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_un_string_csv()
 {
-    TP *tp = tp_crear(ARCHIVO_PRUEBA);
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-    char *poke = "Pikachu";
-    tp_seleccionar_pokemon(tp, JUGADOR_1, poke);
+	char *poke = "Pikachu";
+	tp_seleccionar_pokemon(tp, JUGADOR_1, poke);
 
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
-        "Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1) == 2,
-        "Se agrega correctamente el segundo obstáculo de destreza en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1) == 3,
-        "Se agrega correctamente el tercer obstáculo de destreza en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 1) == 4,
-        "Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 4) == 5,
-        "Se agrega correctamente el quinto obstáculo de inteligencia en la posición 4 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA, 5) == 6,
-        "Se agrega correctamente el sexto obstáculo de inteligencia en la posición 5 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 6) == 7,
-        "Se agrega correctamente el séptimo obstáculo de fuerza en la posición 6 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 0) == 1,
+		"Se agrega correctamente el primer obstáculo de fuerza en la posición 0 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1) == 2,
+		"Se agrega correctamente el segundo obstáculo de destreza en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_DESTREZA, 1) == 3,
+		"Se agrega correctamente el tercer obstáculo de destreza en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     1) == 4,
+		"Se agrega correctamente el cuarto obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     4) == 5,
+		"Se agrega correctamente el quinto obstáculo de inteligencia en la posición 4 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_INTELIGENCIA,
+				     5) == 6,
+		"Se agrega correctamente el sexto obstáculo de inteligencia en la posición 5 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_1, OBSTACULO_FUERZA, 6) == 7,
+		"Se agrega correctamente el séptimo obstáculo de fuerza en la posición 6 y devuelve la cantidad correcta de obstáculos.");
 
-    char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_1);
+	char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_1);
 
-    pa2m_afirmar(
-        tiempos_obstaculos != NULL,
-        "Se calculan los tiempos de los obstáculos correctamente.");
+	pa2m_afirmar(
+		tiempos_obstaculos != NULL,
+		"Se calculan los tiempos de los obstáculos correctamente.");
 
-    free(tiempos_obstaculos);
-    tp_destruir(tp);
+	free(tiempos_obstaculos);
+	tp_destruir(tp);
 }
 
 void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_considere_sus_anteriores()
 {
-    TP *tp = tp_crear(ARCHIVO_PRUEBA);
+	TP *tp = tp_crear(ARCHIVO_PRUEBA);
 
-    char *poke = "charizard";
-    tp_seleccionar_pokemon(tp, JUGADOR_2, poke);
+	char *poke = "charizard";
+	tp_seleccionar_pokemon(tp, JUGADOR_2, poke);
 
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 0) == 1,
-        "Se agrega correctamente el primer obstáculo de inteligencia en la posición 0 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 1) == 2,
-        "Se agrega correctamente el segundo obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA, 2) == 3,
-        "Se agrega correctamente el tercer obstáculo de inteligencia en la posición 2 y devuelve la cantidad correcta de obstáculos.");
-    pa2m_afirmar(
-        tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 3) == 4,
-        "Se agrega correctamente el cuarto obstáculo de destreza en la posición 3 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA,
+				     0) == 1,
+		"Se agrega correctamente el primer obstáculo de inteligencia en la posición 0 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA,
+				     1) == 2,
+		"Se agrega correctamente el segundo obstáculo de inteligencia en la posición 1 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_INTELIGENCIA,
+				     2) == 3,
+		"Se agrega correctamente el tercer obstáculo de inteligencia en la posición 2 y devuelve la cantidad correcta de obstáculos.");
+	pa2m_afirmar(
+		tp_agregar_obstaculo(tp, JUGADOR_2, OBSTACULO_DESTREZA, 3) == 4,
+		"Se agrega correctamente el cuarto obstáculo de destreza en la posición 3 y devuelve la cantidad correcta de obstáculos.");
 
-    char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
+	char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
 
-    pa2m_afirmar(
-        tiempos_obstaculos != NULL,
-        "Se calculan los tiempos de los obstáculos correctamente.");
+	pa2m_afirmar(
+		tiempos_obstaculos != NULL,
+		"Se calculan los tiempos de los obstáculos correctamente.");
 
-    free(tiempos_obstaculos);
-    tp_destruir(tp);
+	free(tiempos_obstaculos);
+	tp_destruir(tp);
 }
-
 
 void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_sean_correctos()
 {
@@ -588,7 +599,6 @@ void cuando_se_calcula_el_tiempo_por_obstaculo_se_espera_que_sean_correctos()
 	pa2m_afirmar(
 		tiempos_obstaculos != NULL,
 		"Se calculan los tiempos de los obstaculos correctamente para Caeterpie (IFDDDDII).");
-	
 
 	free(tiempos_obstaculos);
 	free(tiempos_obstaculos_2);
@@ -613,13 +623,10 @@ void cuando_se_calcula_tiempo_pista_se_devuelve_un_numero_válido()
 
 	char *tiempos_obstaculos = tp_tiempo_por_obstaculo(tp, JUGADOR_2);
 
-
-
 	pa2m_afirmar(
 		tiempos_obstaculos != NULL,
 		"Se calculan los tiempos de los obstaculos correctamente.");
 	free(tiempos_obstaculos);
-
 
 	tp_destruir(tp);
 }
@@ -805,34 +812,53 @@ void cuando_se_ejecuta_un_comando_inexistente_se_devuelve_comando_inexistente()
 	menu_destruir(menu);
 }
 
-bool imprimir_comando_y_descripcion(const char *clave, const char *descripcion, bool (*funcion)(void*), void *aux) {
-    printf("Comando: %s\nDescripción: %s\n", clave, descripcion);
-    return true;
+bool imprimir_comando_y_descripcion(const char *clave, const char *descripcion,
+				    bool (*funcion)(void *), void *aux)
+{
+	printf("Comando: %s\nDescripción: %s\n", clave, descripcion);
+	return true;
 }
 
-void cuando_se_iteran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones() {
-    menu_t* menu = menu_crear();
+void cuando_se_iteran_los_comandos_se_espera_que_se_impriman_los_comandos_y_las_descripciones()
+{
+	menu_t *menu = menu_crear();
 
-    menu_agregar_comando(menu, "imprimir_texto", "Imprime el texto dado", imprimir_texto);
-    pa2m_afirmar(true, "Se agrega un comando.");
-    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_texto"), "El comando 'imprimir_texto' es agregado correctamente al menú.");
+	menu_agregar_comando(menu, "imprimir_texto", "Imprime el texto dado",
+			     imprimir_texto);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(
+		menu_contiene_comando(menu, "imprimir_texto"),
+		"El comando 'imprimir_texto' es agregado correctamente al menú.");
 
-    menu_agregar_comando(menu, "imprimir_resta", "Imprime la resta de dos números", imprimir_resta);
-    pa2m_afirmar(true, "Se agrega un comando.");
-    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_resta"), "El comando 'imprimir_resta' es agregado correctamente al menú.");
+	menu_agregar_comando(menu, "imprimir_resta",
+			     "Imprime la resta de dos números", imprimir_resta);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(
+		menu_contiene_comando(menu, "imprimir_resta"),
+		"El comando 'imprimir_resta' es agregado correctamente al menú.");
 
-    menu_agregar_comando(menu, "imprimir_multiplicacion", "Imprime la multiplicación de dos números", imprimir_multiplicacion);
-    pa2m_afirmar(true, "Se agrega un comando.");
-    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_multiplicacion"), "El comando 'imprimir_multiplicacion' es agregado correctamente al menú.");
+	menu_agregar_comando(menu, "imprimir_multiplicacion",
+			     "Imprime la multiplicación de dos números",
+			     imprimir_multiplicacion);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(
+		menu_contiene_comando(menu, "imprimir_multiplicacion"),
+		"El comando 'imprimir_multiplicacion' es agregado correctamente al menú.");
 
-    menu_agregar_comando(menu, "imprimir_division", "Imprime la división de dos números", imprimir_division);
-    pa2m_afirmar(true, "Se agrega un comando.");
-    pa2m_afirmar(menu_contiene_comando(menu, "imprimir_division"), "El comando 'imprimir_division' es agregado correctamente al menú.");
+	menu_agregar_comando(menu, "imprimir_division",
+			     "Imprime la división de dos números",
+			     imprimir_division);
+	pa2m_afirmar(true, "Se agrega un comando.");
+	pa2m_afirmar(
+		menu_contiene_comando(menu, "imprimir_division"),
+		"El comando 'imprimir_division' es agregado correctamente al menú.");
 
-    pa2m_afirmar(true, "Se muestran todos los comandos agregados y su descripción.");
-    menu_con_cada_comando(menu, imprimir_comando_y_descripcion, NULL);
+	pa2m_afirmar(
+		true,
+		"Se muestran todos los comandos agregados y su descripción.");
+	menu_con_cada_comando(menu, imprimir_comando_y_descripcion, NULL);
 
-    menu_destruir(menu);
+	menu_destruir(menu);
 }
 
 int main()

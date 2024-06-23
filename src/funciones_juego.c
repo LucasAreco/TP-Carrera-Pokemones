@@ -14,7 +14,6 @@
 #define QUITAR_OBSTACULO "-"
 #define SEPARADOR ','
 
-
 void liberar_memoria_split(char **nombres)
 {
 	for (int i = 0; nombres[i] != NULL; i++) {
@@ -120,10 +119,10 @@ bool volver_a_menu_armado_pista(char *linea, estado_t *estado,
 {
 	if (strcmp(linea, "b") == 0) {
 		printf("Volviendo al menú de armado de pista.\n");
-		free(pista_usuario); 
+		free(pista_usuario);
 		return volver(estado);
 	}
-	return false; 
+	return false;
 }
 
 bool datos_de_modificacion_pista_validos(char **datos_modificacion,
@@ -150,8 +149,8 @@ bool datos_de_modificacion_pista_validos(char **datos_modificacion,
 	return son_validos;
 }
 
-bool ejecutar_tipo_de_modificacion(char **datos_modificacion, char **pista_usuario,
-				estado_t *estado)
+bool ejecutar_tipo_de_modificacion(char **datos_modificacion,
+				   char **pista_usuario, estado_t *estado)
 {
 	char *tipo_modificacion = datos_modificacion[0];
 	enum TP_OBSTACULO tipo_obstaculo =
@@ -161,15 +160,13 @@ bool ejecutar_tipo_de_modificacion(char **datos_modificacion, char **pista_usuar
 	if (strcmp(tipo_modificacion, AGREGAR_OBSTACULO) == 0) {
 		tp_agregar_obstaculo(estado->juego, JUGADOR_1, tipo_obstaculo,
 				     (unsigned)posicion);
-		free(*pista_usuario); 
-		*pista_usuario =
-			NULL; 
+		free(*pista_usuario);
+		*pista_usuario = NULL;
 	} else if (strcmp(tipo_modificacion, QUITAR_OBSTACULO) == 0) {
 		tp_quitar_obstaculo(estado->juego, JUGADOR_1,
 				    (unsigned)posicion);
-		free(*pista_usuario); 
-		*pista_usuario =
-			NULL; 
+		free(*pista_usuario);
+		*pista_usuario = NULL;
 	} else {
 		printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 	}
@@ -189,7 +186,7 @@ bool agregar_o_quitar_obstaculo(char *linea, estado_t *estado,
 
 	if (datos_de_modificacion_pista_validos(datos_modificacion, true)) {
 		ejecutar_tipo_de_modificacion(datos_modificacion, pista_usuario,
-					   estado);
+					      estado);
 	} else {
 		printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 	}
@@ -219,8 +216,8 @@ int intentos_totales(int dificultad)
 	}
 }
 
-
-bool pasar_a_seleccionar_dificultad(void* e) {
+bool pasar_a_seleccionar_dificultad(void *e)
+{
 	estado_t *estado = (estado_t *)e;
 	destruir_fase(estado->fase_actual);
 	estado->fase_actual = seleccionar_dificultad(estado);
@@ -274,7 +271,7 @@ bool seleccion_pokemon_usuario(void *e)
 		mostrar_info_pokemon(pokemon_usuario);
 		printf("\nSi el pokemon seleccionado es correcto, oprime 'c' para continuar o ingresa otro nombre:\n");
 		return true;
-	} 
+	}
 	return false;
 }
 
@@ -362,7 +359,7 @@ bool modificar_pista(void *e)
 					free(pista_usuario);
 					return false;
 				}
-			} else {	
+			} else {
 				printf("Comando inválido. Formato esperado: +/- TIPO_OBSTACULO POSICION (ej. +/- F 3)\n");
 			}
 		}

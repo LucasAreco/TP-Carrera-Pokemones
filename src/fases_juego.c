@@ -4,31 +4,32 @@
 #include <stdlib.h>
 #include "split.h"
 
-
-void agregar_comandos_base_en_menu(menu_t* menu) {
-	menu_agregar_comando(menu, "H", "Se imprime ayuda del menu.", mostrar_comando_y_descripcion);
+void agregar_comandos_base_en_menu(menu_t *menu)
+{
+	menu_agregar_comando(menu, "H", "Se imprime ayuda del menu.",
+			     mostrar_comando_y_descripcion);
 	menu_agregar_comando(menu, "Q", "Salir del juego.", salir);
-
-
 }
 
-fase_t* inicio_juego() {
-	fase_t* fase_inicio = inicializar_fase();
+fase_t *inicio_juego()
+{
+	fase_t *fase_inicio = inicializar_fase();
 	if (!fase_inicio) {
 		return NULL;
 	}
 
-	menu_t* menu_inicio = fase_inicio->menu;
-	
-	menu_agregar_comando(menu_inicio, "C", "Continuar el juego", pasar_a_seleccionar_dificultad);
-	menu_agregar_comando(menu_inicio, "?", "Acerca del juego", mostrar_acerca_del_juego);
+	menu_t *menu_inicio = fase_inicio->menu;
+
+	menu_agregar_comando(menu_inicio, "C", "Continuar el juego",
+			     pasar_a_seleccionar_dificultad);
+	menu_agregar_comando(menu_inicio, "?", "Acerca del juego",
+			     mostrar_acerca_del_juego);
 	agregar_comandos_base_en_menu(menu_inicio);
 
 	fase_inicio->contenido = mostrar_interfaz_inicio;
 
 	return fase_inicio;
 }
-
 
 fase_t *seleccionar_dificultad()
 {

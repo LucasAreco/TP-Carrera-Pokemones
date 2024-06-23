@@ -37,20 +37,22 @@ nodo_abb_t *nodo_crear(void *elemento)
 	return nuevo_nodo_abb;
 }
 
-nodo_abb_t *abb_insertar_aux(nodo_abb_t *raiz_actual, void *elemento,
+nodo_abb_t *abb_insertar_aux(nodo_abb_t *raiz_actual, nodo_abb_t *nuevo_nodo,
 			     abb_comparador comparador)
 {
 	if (!raiz_actual) {
-		return nodo_crear(elemento);
+		return nuevo_nodo;
 	}
 
-	int comparacion = comparador(elemento, raiz_actual->elemento);
+	int comparacion =
+		comparador(nuevo_nodo->elemento, raiz_actual->elemento);
 	if (comparacion <= 0) {
 		raiz_actual->izquierda = abb_insertar_aux(
-			raiz_actual->izquierda, elemento, comparador);
+			raiz_actual->izquierda, nuevo_nodo, comparador);
+
 	} else {
 		raiz_actual->derecha = abb_insertar_aux(raiz_actual->derecha,
-							elemento, comparador);
+							nuevo_nodo, comparador);
 	}
 
 	return raiz_actual;
@@ -58,14 +60,19 @@ nodo_abb_t *abb_insertar_aux(nodo_abb_t *raiz_actual, void *elemento,
 
 abb_t *abb_insertar(abb_t *arbol, void *elemento)
 {
-	if (!arbol) {
+	if (!arbol || !arbol->comparador) {
 		return NULL;
 	}
 
-	arbol->nodo_raiz =
-		abb_insertar_aux(arbol->nodo_raiz, elemento, arbol->comparador);
-	(arbol->tamanio)++;
+	nodo_abb_t *nuevo_nodo = nodo_crear(elemento);
+	if (!nuevo_nodo) {
+		return NULL;
+	}
 
+	arbol->nodo_raiz = abb_insertar_aux(arbol->nodo_raiz, nuevo_nodo,
+					    arbol->comparador);
+
+	arbol->tamanio++;
 	return arbol;
 }
 
