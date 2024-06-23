@@ -60,7 +60,7 @@ typedef struct cadena {
 } cadena_t;
 ```
 
-Uno de sus campos es el ```TP``` para poder acceder rapidamente en la implementación a toda la información quie despues va a servir para armar la cadena. Obviamente una cadena tiene palabras (que en este caso podrían ser números también). Luego se le pasa un separador porque si se desea que las palabras esten concatenadas por algún caracter como ',' o '.', se puede definir aquí. Por último se le puede asignar si para llenar esa cadena hay una conversión o no. Esto fue muy útil para la función ```bool sllenar_cadena_letras```.
+Uno de sus campos es el ```TP``` para poder acceder rapidamente en la implementación a toda la información quie despues va a servir para armar la cadena. Obviamente una cadena tiene palabras (que en este caso podrían ser números también). Luego se le pasa un separador porque si se desea que las palabras esten concatenadas por algún caracter como ',' o '.', se puede definir aquí. Por último se le puede asignar si para llenar esa cadena hay una conversión o no. Esto fue muy útil para la función ```bool llenar_cadena_letras```.
 
 --- 
 ## Complejidades de las funciones del TDA TP
