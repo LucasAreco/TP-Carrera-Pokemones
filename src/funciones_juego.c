@@ -332,12 +332,12 @@ bool modificar_pista(void *e)
 {
 	estado_t *estado = (estado_t *)e;
 	char *pista_usuario = NULL;
-	printf("\n\t - MODO MODIFACION PISTA ACTIVADO - \n");
+	printf("\n\t - MODO MODIFICACION PISTA ACTIVADO - \n");
 
 	while (true) {
 		pista_usuario = mostrar_pista_usuario(pista_usuario, estado);
 		if (!pista_usuario) {
-			printf("\nLa pista no tiene obstaculo. Agrega o quita algun obstáculo con +/- TIPO_OBSTACULO POSICION (ej. +/- D 0).\n");
+			printf("\nLa pista no tiene obstaculos. Agrega o quita algun obstáculo con +/- TIPO_OBSTACULO POSICION (ej. +/- D 0).\n");
 		} else {
 			printf("\n\nSi ya no quieres modificar la pista, regresa ingresando 'b'.\n\n");
 		}
@@ -353,7 +353,7 @@ bool modificar_pista(void *e)
 
 			size_t longitud_linea = strlen(linea);
 
-			if (longitud_linea == 5 || longitud_linea == 6) {
+			if (longitud_linea == 5 || longitud_linea >= 6) {
 				if (!agregar_o_quitar_obstaculo(
 					    linea, estado, &pista_usuario)) {
 					free(pista_usuario);

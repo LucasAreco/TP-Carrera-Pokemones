@@ -5,18 +5,18 @@
 - Para compilar:
 
 ```bash
-gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g juego.c -o juego
+gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g src/*.c juego.c -o juego
 ```
 
-- Para ejecutar:
-
-```bash
-./juego
+- Para ejecutar: 
+(Puedes pasarle el archivo con los pokemones que quieras)
+```bash 
+./juego pokemones.txt
 ```
 
 - Para ejecutar con valgrind:
 ```bash
-valgrind ./juego
+valgrind ./juego pokemones.txt
 ```
 ---
 ##  Implementación TDA TP
@@ -41,7 +41,13 @@ typedef struct jugador {
 	unsigned tiempo_pista;
 } jugador_t;
 ```
-En primer lugar cada jugador posee un tipo para poder diferenciarse de los otros jugadores. En este caso, puede ser jugador 1 o jugador 2. También, se le agrega un campo para el pokémon que selecciona en algun momento, así podemos controlar los pokémones que son asignados a los jugadores. Luego, se utiliza la estructura ```lista_t``` para guardar los obstáculos de la pista del jugador. Aquí no se utiliza un árbol ya que de todas formas se deben recorrer todos los obstáculos para calcular el tiempo por cada uno y el tiempo total por finalizar el recorrido por la pista. Este tiempo que tarda el jugador en recorrer la pista también se guarda en ```jugador_t```. 
+En primer lugar cada jugador posee un tipo para poder diferenciarse de los otros jugadores. En este caso, puede ser jugador 1 o jugador 2. También, se le agrega un campo para el pokémon que se selecciona en algun momento, así se puede controlar los pokémones que son asignados a los jugadores. Luego, se utiliza la estructura ```lista_t``` para guardar los obstáculos de la pista del jugador. Aquí no se utiliza un árbol ya que de todas formas se deben recorrer todos los obstáculos para calcular el tiempo por cada uno y el tiempo total por finalizar el recorrido de la pista. Este tiempo que tarda el jugador en recorrer la pista también se guarda en ```jugador_t```. Aquí se puede ver un diagrama conceptual de las estructuras en la memoria.
+
+<div align="center">
+<img width="70%" src="img/tp-memory.jpg">
+</div>
+
+###
 
 Como un par de funciones generan una cadena de caracteres o de números a partir de datos de los pokemones, jugadores o incluso de la pista de obstáculos, se estableció una estructura privada llamada ```cadena_t```. 
 
@@ -165,12 +171,12 @@ typedef struct fase {
 } fase_t;
 ```
 
-Entonces esta estructura tiene un menu para agregar los comandos especifícos para esa etapa del juego, la entrada que se hace el usuario en esa fase y el contenido gráfico que se tiene que mostrar por pantalla para saber en que fase del juego se encuentra actualmente.
+La estructura del juego se organiza en fases, cada una con su propio menú que contiene los comandos específicos para esa etapa del juego. En cada fase, el usuario ingresa comandos, se procesa la entrada y se muestra el contenido gráfico correspondiente, indicando la fase actual del juego.
 
+A medida que se validan las entradas del usuario, el juego avanza o retrocede de fase hasta alcanzar el final. Algunos comandos también muestran información adicional en pantalla, pero siempre dentro del contexto de la fase en la que se ejecutan.
 
+En ciertas fases, se le pregunta al usuario si desea continuar, permitiéndole tiempo para revisar la información presentada. Un ejemplo de esto es cuando se muestra el Pokémon contra el que competirá.
 
+Cabe destacar que, debido a su implementación, ```menu_t``` solo admite comandos de una sola letra o palabra. Esto presentó un problema durante la fase de armado de pista del usuario, donde debía especificar el tipo de modificación, el tipo de obstáculo y la posición. En lugar de preguntar cada uno por separado, se decidió implementar un modo especial dentro de esa fase. En este modo, el usuario puede ingresar en una sola línea la operación que desea realizar, mejorando la fluidez y protegiendo de modificaciones incorrectas a la pista, que es una estructura esencial para el juego.
 
-
-<div align="center">
-<img width="70%" src="">
-</div>
+Siempre se le señala al usuario que debe ingresar para mantenerse en el flujo del juego. En caso de conocer todos los comandos de la fase actual puede oprimir 'h' (help) para que ver los comandos disponibles y su descripción.
