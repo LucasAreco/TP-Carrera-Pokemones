@@ -44,7 +44,7 @@ typedef struct jugador {
 En primer lugar cada jugador posee un tipo para poder diferenciarse de los otros jugadores. En este caso, puede ser jugador 1 o jugador 2. También, se le agrega un campo para el pokémon que se selecciona en algun momento, así se puede controlar los pokémones que son asignados a los jugadores. Luego, se utiliza la estructura ```lista_t``` para guardar los obstáculos de la pista del jugador. Aquí se usa una lista ya que de todas formas se deben recorrer todos los obstáculos para calcular el tiempo por cada uno y el tiempo total por finalizar el recorrido de la pista. Este tiempo que tarda el jugador en recorrer la pista también se guarda en ```jugador_t```. Aquí se puede ver un diagrama conceptual de las estructuras en la memoria.
 
 <div align="center">
-<img width="70%" src="img/tp-memory.jpg">
+<img width="100%" src="img/tp-memory.jpg">
 </div>
 
 ###
@@ -176,7 +176,7 @@ La estructura del juego se organiza en fases, cada una con su propio menú que c
 A medida que se validan las entradas del usuario, el juego avanza o retrocede de fase hasta alcanzar el final. Algunos comandos también muestran información adicional en pantalla, pero siempre dentro del contexto de la fase en la que se ejecutan. Acá se muestran en un gráfico bàsicolas distintas fases y su orden:
 
 <div align="center">
-<img width="70%" src="img/fases.jpg">
+<img width="100%" src="img/fases.jpg">
 </div>
 
 ## 
